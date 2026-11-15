@@ -1,0 +1,12 @@
+{
+  "name": "the-maternity-home",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The Maternity Home — custom storefront, admin portal, and API",
+  "scripts": {
+    "generate:plan-docx": "node scripts/generate-plan-docx.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
