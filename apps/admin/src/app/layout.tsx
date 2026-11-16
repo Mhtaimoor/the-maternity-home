@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: `${APP_NAME} Admin`,
   description: 'Staff admin portal',
   robots: { index: false, follow: false },
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png', sizes: '512x512' }],
+    apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

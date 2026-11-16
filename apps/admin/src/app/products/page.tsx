@@ -10,12 +10,7 @@ import {
   PageHeader,
   StatusBadge,
 } from '../../components/ui';
-
-const SKU_THUMBS: Record<string, string> = {
-  'TMH-MP-001': '/images/product-maternity-pads.jpg',
-  'TMH-NO-010': '/images/product-onesie.jpg',
-  'TMH-FB-250': '/images/product-bottle.jpg',
-};
+import { productImage } from '../../lib/images';
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -159,7 +154,7 @@ export default function ProductsPage() {
           >
             {products.map((p) => {
               const v = p.variants?.[0];
-              const thumb = SKU_THUMBS[p.sku] || '/images/product-onesie.jpg';
+              const thumb = productImage(p);
               return (
                 <tr key={p.id}>
                   <td>

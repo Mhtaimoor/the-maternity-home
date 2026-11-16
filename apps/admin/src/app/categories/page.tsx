@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, getTokens } from '../../lib/api';
 import { DataPanel, DataTable, EmptyState, PageHeader, StatusBadge } from '../../components/ui';
+import { categoryImage } from '../../lib/images';
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -39,9 +40,9 @@ export default function CategoriesPage() {
         </DataPanel>
         <DataPanel title="Category table" footer={`${rows.length} categories`}>
           <DataTable
-            minWidth={520}
+            minWidth={560}
             headers={[
-              { label: 'Name' },
+              { label: 'Category' },
               { label: 'Slug' },
               { label: 'Order', className: 'text-center' },
               { label: 'Status' },
@@ -50,7 +51,13 @@ export default function CategoriesPage() {
           >
             {rows.map((r) => (
               <tr key={r.id}>
-                <td className="fw-semibold">{r.name}</td>
+                <td>
+                  <div className="d-flex gap-2 align-items-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={categoryImage(r.slug)} alt="" className="tmh-thumb" />
+                    <div className="fw-semibold">{r.name}</div>
+                  </div>
+                </td>
                 <td className="tmh-meta">{r.slug}</td>
                 <td className="text-center">{r.sortOrder}</td>
                 <td><StatusBadge value={r.active ? 'ACTIVE' : 'DRAFT'} /></td>

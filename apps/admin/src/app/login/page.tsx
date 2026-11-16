@@ -32,7 +32,11 @@ export default function LoginPage() {
   return (
     <div className="tmh-login-wrap">
       <form className="tmh-login-card tmh-form" onSubmit={onSubmit}>
-        <div className="tmh-brand fs-3 mb-1">The Maternity Home</div>
+        <div className="d-flex align-items-center gap-2 mb-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/brand-mark.png" alt="" width={48} height={48} className="tmh-brand-mark" />
+          <div className="tmh-brand fs-3 mb-0">The Maternity Home</div>
+        </div>
         <div className="tmh-meta mb-4">Operations portal · secure staff access</div>
         <div className="mb-3">
           <label className="form-label">Email</label>

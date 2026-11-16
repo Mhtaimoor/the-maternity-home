@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPkr, getTokens } from '../../lib/api';
 import { DataPanel, DataTable, EmptyState, PageHeader, SoftLink, StatusBadge } from '../../components/ui';
+import { productImageBySku } from '../../lib/images';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -75,8 +76,14 @@ export default function DashboardPage() {
               {data.lowStock?.map((r: any) => (
                 <tr key={r.sku}>
                   <td>
-                    <div className="fw-semibold">{r.productName}</div>
-                    <div className="tmh-meta">{r.variantName} · {r.sku}</div>
+                    <div className="d-flex gap-2 align-items-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={productImageBySku(r.sku)} alt="" className="tmh-thumb" />
+                      <div>
+                        <div className="fw-semibold">{r.productName}</div>
+                        <div className="tmh-meta">{r.variantName} · {r.sku}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="text-end">
                     <StatusBadge value={r.available <= 2 ? 'PENDING' : 'ACTIVE'} />

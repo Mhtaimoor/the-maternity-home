@@ -206,8 +206,8 @@ async function main() {
     update: {
       json: JSON.stringify({
         storeName: 'The Maternity Home',
-        phone: '+92-300-0000000',
-        whatsapp: '+923000000000',
+        phone: '+92 3454105452',
+        whatsapp: '+923454105452',
         email: 'hello@thematernityhome.pk',
         currency: 'PKR',
         supportHours: 'Mon–Sat 10:00–18:00',
@@ -217,8 +217,8 @@ async function main() {
       id: 'default',
       json: JSON.stringify({
         storeName: 'The Maternity Home',
-        phone: '+92-300-0000000',
-        whatsapp: '+923000000000',
+        phone: '+92 3454105452',
+        whatsapp: '+923454105452',
         email: 'hello@thematernityhome.pk',
         currency: 'PKR',
         supportHours: 'Mon–Sat 10:00–18:00',

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@tmh/shared';
 import { formatPkr } from '../lib/api';
 import { categoryImage, productImage } from '../lib/images';
 
@@ -59,11 +60,11 @@ export default async function HomePage() {
             <div className="fw-semibold mt-2">Thoughtful catalogue</div>
             <div className="text-secondary small">Clear sizes, packs and stock status</div>
           </div>
-          <div className="tmh-trust-item">
-            <i className="bi bi-chat-heart fs-4 text-success" />
+          <a className="tmh-trust-item text-decoration-none text-dark" href={STORE_WHATSAPP_URL} target="_blank" rel="noreferrer">
+            <i className="bi bi-whatsapp fs-4 text-success" />
             <div className="fw-semibold mt-2">WhatsApp support</div>
-            <div className="text-secondary small">Human help when you need it</div>
-          </div>
+            <div className="text-secondary small">{STORE_PHONE_DISPLAY}</div>
+          </a>
         </div>
       </section>
 

@@ -43,6 +43,14 @@ body.tmh-body {
   border-bottom: 1px solid rgba(213, 226, 220, 0.9);
 }
 
+.tmh-nav-mark {
+  border-radius: 0.7rem;
+  object-fit: cover;
+  border: 1px solid rgba(61, 155, 130, 0.25);
+  background: #fff;
+  flex-shrink: 0;
+}
+
 .tmh-nav-link {
   color: var(--tmh-ink-soft) !important;
   font-weight: 500;

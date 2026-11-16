@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api, formatPkr, getTokens } from '../../../lib/api';
 import { DataPanel, DataTable, PageHeader, StatusBadge } from '../../../components/ui';
+import { productImageBySku } from '../../../lib/images';
 
 const NEXT: Record<string, string> = {
   NEW: 'CONFIRMED',
@@ -112,8 +113,14 @@ export default function OrderDetailPage() {
               {order.items.map((i: any) => (
                 <tr key={i.id}>
                   <td>
-                    <div className="fw-semibold">{i.productName}</div>
-                    <div className="tmh-meta">{i.sku}</div>
+                    <div className="d-flex gap-2 align-items-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={productImageBySku(i.sku)} alt="" className="tmh-thumb" />
+                      <div>
+                        <div className="fw-semibold">{i.productName}</div>
+                        <div className="tmh-meta">{i.sku}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="text-center">{i.quantity}</td>
                   <td className="text-end fw-semibold">{formatPkr(i.lineTotal)}</td>

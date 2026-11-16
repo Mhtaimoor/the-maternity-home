@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { APP_NAME, STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@tmh/shared';
 
 const links = [
   { href: '/shop', label: 'Shop' },
@@ -12,8 +13,10 @@ export function SiteHeader() {
   return (
     <nav className="navbar navbar-expand-lg tmh-navbar sticky-top">
       <div className="container">
-        <Link className="navbar-brand tmh-brand fs-4 mb-0" href="/">
-          The Maternity Home
+        <Link className="navbar-brand tmh-brand fs-4 mb-0 d-flex align-items-center gap-2" href="/">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/brand-mark.png" alt="" width={36} height={36} className="tmh-nav-mark" />
+          {APP_NAME}
         </Link>
         <button
           className="navbar-toggler"
@@ -38,9 +41,10 @@ export function SiteHeader() {
             <li className="nav-item ms-lg-2">
               <a
                 className="btn btn-tmh"
-                href="https://wa.me/923000000000"
+                href={STORE_WHATSAPP_URL}
                 target="_blank"
                 rel="noreferrer"
+                aria-label={`WhatsApp ${STORE_PHONE_DISPLAY}`}
               >
                 <i className="bi bi-whatsapp me-1" /> WhatsApp
               </a>
@@ -58,11 +62,19 @@ export function SiteFooter() {
       <div className="container">
         <div className="row g-4">
           <div className="col-md-5">
-            <div className="tmh-brand fs-3">The Maternity Home</div>
-            <p className="text-secondary mb-0 mt-2">
+            <div className="tmh-brand fs-3 d-flex align-items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/brand-mark.png" alt="" width={40} height={40} className="tmh-nav-mark" />
+              {APP_NAME}
+            </div>
+            <p className="text-secondary mb-2 mt-2">
               Maternity, postpartum, newborn and baby essentials — care-focused shopping for Pakistani
               families.
             </p>
+            <a className="text-decoration-none" href={STORE_WHATSAPP_URL} target="_blank" rel="noreferrer">
+              <i className="bi bi-whatsapp me-1" />
+              WhatsApp {STORE_PHONE_DISPLAY}
+            </a>
           </div>
           <div className="col-md-3">
             <div className="fw-semibold mb-2">Help</div>

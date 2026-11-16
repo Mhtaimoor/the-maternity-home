@@ -366,6 +366,15 @@ a { color: inherit; }
   object-fit: cover;
   background: var(--tmh-panel-2);
   border: 1px solid var(--tmh-line);
+  flex-shrink: 0;
+}
+
+.tmh-brand-mark {
+  border-radius: 0.85rem;
+  object-fit: cover;
+  border: 1px solid var(--tmh-line);
+  background: #f7f4ef;
+  flex-shrink: 0;
 }
 
 .tmh-meta {

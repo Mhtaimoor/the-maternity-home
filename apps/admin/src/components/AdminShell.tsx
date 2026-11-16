@@ -24,8 +24,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="d-flex tmh-shell">
       <aside className="tmh-sidebar">
         <div className="tmh-sidebar-brand">
-          <div className="tmh-brand fs-4 mb-0">TMH Admin</div>
-          <div className="tmh-meta">The Maternity Home operations</div>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/brand-mark.png" alt="" width={40} height={40} className="tmh-brand-mark" />
+            <div>
+              <div className="tmh-brand fs-5 mb-0">TMH Admin</div>
+              <div className="tmh-meta">The Maternity Home</div>
+            </div>
+          </div>
         </div>
         <nav className="flex-grow-1">
           {links.map((l) => (

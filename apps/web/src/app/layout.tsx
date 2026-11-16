@@ -9,6 +9,10 @@ import '../styles/tmh.css';
 export const metadata: Metadata = {
   title: APP_NAME,
   description: 'Maternity, postpartum, newborn and baby essentials — Pakistan',
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png', sizes: '512x512' }],
+    apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

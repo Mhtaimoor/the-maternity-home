@@ -10,7 +10,7 @@
 | Notifications | Log + NotificationLog table | Email/SMS providers not configured |
 | Delivery cities | Lahore, Islamabad, Karachi, Faisalabad | Editable in admin |
 | Coupon | `WELCOME10` (10% off, min Rs 1500) | Demo only |
-| Contacts | Placeholder phone/WhatsApp/email in store settings | Replace with real business contacts |
+| Contacts | WhatsApp/phone `+92 3454105452` (`wa.me/923454105452`) | Update seed/settings if the number changes |
 
 ## Run locally
 
