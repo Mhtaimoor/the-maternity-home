@@ -77,7 +77,7 @@ export function DataTable({
   headers,
   children,
   empty,
-  minWidth = 760,
+  minWidth = 560,
 }: {
   headers: Array<{ label: string; className?: string; width?: string }>;
   children: React.ReactNode;
@@ -90,7 +90,7 @@ export function DataTable({
   return (
     <div className="tmh-table-wrap">
       {hasRows ? (
-        <table className="table tmh-table align-middle" style={{ minWidth }}>
+        <table className="table tmh-table table-borderless align-middle mb-0" style={{ minWidth, width: '100%' }}>
           <thead>
             <tr>
               {headers.map((h, i) => (

@@ -104,6 +104,7 @@ export default function DashboardPage() {
             }
           >
             <DataTable
+              minWidth={420}
               headers={[
                 { label: 'Order' },
                 { label: 'Status' },

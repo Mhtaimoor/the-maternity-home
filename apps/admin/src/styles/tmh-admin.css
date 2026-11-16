@@ -193,55 +193,91 @@ a { color: inherit; }
 .tmh-table-wrap {
   overflow: auto;
   max-width: 100%;
+  background: transparent;
+}
+
+.tmh-table-wrap::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.tmh-table-wrap::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.tmh-table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(61, 155, 130, 0.45);
+  border-radius: 999px;
 }
 
 .tmh-table {
   --bs-table-bg: transparent;
   --bs-table-color: var(--tmh-ink);
   --bs-table-border-color: var(--tmh-line-soft);
-  --bs-table-striped-bg: rgba(255, 255, 255, 0.025);
-  --bs-table-hover-bg: rgba(61, 155, 130, 0.1);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+  --bs-table-striped-color: var(--tmh-ink);
+  --bs-table-hover-bg: rgba(61, 155, 130, 0.12);
+  --bs-table-hover-color: #fff;
+  --bs-table-active-bg: rgba(61, 155, 130, 0.16);
+  --bs-table-active-color: #fff;
+  --bs-body-bg: transparent;
+  color: var(--tmh-ink) !important;
+  background-color: transparent !important;
   margin-bottom: 0;
-  min-width: 720px;
+  border-color: var(--tmh-line-soft) !important;
+}
+
+.tmh-table > :not(caption) > * > * {
+  background-color: transparent !important;
+  color: inherit !important;
+  border-bottom-color: var(--tmh-line-soft) !important;
+  box-shadow: none !important;
 }
 
 .tmh-table thead th {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #12231f;
-  color: var(--tmh-ink-soft);
+  background: #12231f !important;
+  color: var(--tmh-ink-soft) !important;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 600;
-  border-bottom-width: 1px;
+  border-bottom: 1px solid var(--tmh-line) !important;
   white-space: nowrap;
   padding: 0.85rem 1rem;
+}
+
+.tmh-table tbody tr {
+  background-color: rgba(10, 22, 19, 0.35) !important;
+  transition: background 0.15s ease;
+}
+
+.tmh-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.tmh-table tbody tr:hover {
+  background-color: rgba(61, 155, 130, 0.14) !important;
 }
 
 .tmh-table tbody td {
   padding: 0.95rem 1rem;
   vertical-align: middle;
-  border-color: var(--tmh-line-soft);
-}
-
-.tmh-table tbody tr {
-  transition: background 0.15s ease;
-}
-
-.tmh-table tbody tr:hover {
-  background: rgba(61, 155, 130, 0.08);
+  border-color: var(--tmh-line-soft) !important;
+  color: var(--tmh-ink) !important;
+  background-color: transparent !important;
 }
 
 .tmh-table .row-link {
-  color: #fff;
+  color: #fff !important;
   text-decoration: none;
   font-weight: 600;
 }
 
 .tmh-table .row-link:hover {
-  color: var(--tmh-sage);
+  color: #7ddec4 !important;
 }
 
 .tmh-empty {
