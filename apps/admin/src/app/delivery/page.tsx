@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { api, getTokens } from '../../lib/api';
+import { api, formatPkr, getTokens } from '../../lib/api';
+import { DataPanel, DataTable, EmptyState, PageHeader, StatusBadge } from '../../components/ui';
 
 export default function DeliveryPage() {
   const router = useRouter();
@@ -22,7 +23,11 @@ export default function DeliveryPage() {
     e.preventDefault();
     await api('/admin/delivery/zones', {
       method: 'POST',
-      body: JSON.stringify({ city: form.city, rate: Number(form.rate), freeAbove: Number(form.freeAbove) }),
+      body: JSON.stringify({
+        city: form.city,
+        rate: Number(form.rate),
+        freeAbove: Number(form.freeAbove),
+      }),
     });
     setForm({ city: '', rate: 250, freeAbove: 4000 });
     await load();
@@ -30,28 +35,48 @@ export default function DeliveryPage() {
 
   return (
     <div>
-      <h1 className="tmh-brand h2 mb-4">Delivery zones</h1>
-      <div className="row g-3">
-        <div className="col-md-4">
-          <form className="tmh-panel tmh-form" onSubmit={save}>
-            <input className="form-control mb-2" required placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            <input className="form-control mb-2" type="number" value={form.rate} onChange={(e) => setForm({ ...form, rate: Number(e.target.value) })} />
-            <input className="form-control mb-3" type="number" value={form.freeAbove} onChange={(e) => setForm({ ...form, freeAbove: Number(e.target.value) })} />
+      <PageHeader title="Delivery" subtitle="City rates, free-delivery thresholds and COD coverage" />
+      <div className="tmh-split">
+        <DataPanel title="Upsert zone">
+          <form className="tmh-panel-body tmh-form" onSubmit={save}>
+            <div className="mb-2">
+              <label className="form-label">City</label>
+              <input className="form-control" required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Rate (PKR)</label>
+              <input className="form-control" type="number" value={form.rate} onChange={(e) => setForm({ ...form, rate: Number(e.target.value) })} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Free above (PKR)</label>
+              <input className="form-control" type="number" value={form.freeAbove} onChange={(e) => setForm({ ...form, freeAbove: Number(e.target.value) })} />
+            </div>
             <button className="btn btn-tmh w-100" type="submit">Save zone</button>
           </form>
-        </div>
-        <div className="col-md-8">
-          <div className="tmh-panel">
-            <table className="table tmh-table mb-0">
-              <thead><tr><th>City</th><th>Rate</th><th>Free above</th><th>COD</th></tr></thead>
-              <tbody>
-                {zones.map((z) => (
-                  <tr key={z.id}><td>{z.city}</td><td>{z.rate}</td><td>{z.freeAbove ?? '—'}</td><td>{String(z.codAvailable)}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        </DataPanel>
+        <DataPanel title="Delivery zones" footer={`${zones.length} cities configured`}>
+          <DataTable
+            minWidth={560}
+            headers={[
+              { label: 'City' },
+              { label: 'Rate' },
+              { label: 'Free above' },
+              { label: 'ETA' },
+              { label: 'COD' },
+            ]}
+            empty={<EmptyState icon="bi-geo" title="No zones yet" />}
+          >
+            {zones.map((z) => (
+              <tr key={z.id}>
+                <td className="fw-semibold">{z.city}</td>
+                <td>{formatPkr(z.rate)}</td>
+                <td>{z.freeAbove != null ? formatPkr(z.freeAbove) : '—'}</td>
+                <td className="tmh-meta">{z.etaDaysMin}–{z.etaDaysMax} days</td>
+                <td><StatusBadge value={z.codAvailable ? 'ACTIVE' : 'DRAFT'} /></td>
+              </tr>
+            ))}
+          </DataTable>
+        </DataPanel>
       </div>
     </div>
   );

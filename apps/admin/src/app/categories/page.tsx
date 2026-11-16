@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, getTokens } from '../../lib/api';
+import { DataPanel, DataTable, EmptyState, PageHeader, StatusBadge } from '../../components/ui';
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -27,26 +28,36 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <h1 className="tmh-brand h2 mb-4">Categories</h1>
-      <div className="row g-3">
-        <div className="col-md-4">
-          <form className="tmh-panel tmh-form" onSubmit={create}>
-            <input className="form-control mb-3" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Category name" />
-            <button className="btn btn-tmh w-100" type="submit">Add</button>
+      <PageHeader title="Categories" subtitle="Organise the storefront browse experience" />
+      <div className="tmh-split">
+        <DataPanel title="Add category">
+          <form className="tmh-panel-body tmh-form" onSubmit={create}>
+            <label className="form-label">Name</label>
+            <input className="form-control mb-3" required value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Nursing care" />
+            <button className="btn btn-tmh w-100" type="submit">Add category</button>
           </form>
-        </div>
-        <div className="col-md-8">
-          <div className="tmh-panel">
-            <table className="table tmh-table mb-0">
-              <thead><tr><th>Name</th><th>Slug</th><th>Active</th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}><td>{r.name}</td><td>{r.slug}</td><td>{String(r.active)}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        </DataPanel>
+        <DataPanel title="Category table" footer={`${rows.length} categories`}>
+          <DataTable
+            minWidth={520}
+            headers={[
+              { label: 'Name' },
+              { label: 'Slug' },
+              { label: 'Order', className: 'text-center' },
+              { label: 'Status' },
+            ]}
+            empty={<EmptyState title="No categories" text="Add one to start grouping products." />}
+          >
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="fw-semibold">{r.name}</td>
+                <td className="tmh-meta">{r.slug}</td>
+                <td className="text-center">{r.sortOrder}</td>
+                <td><StatusBadge value={r.active ? 'ACTIVE' : 'DRAFT'} /></td>
+              </tr>
+            ))}
+          </DataTable>
+        </DataPanel>
       </div>
     </div>
   );

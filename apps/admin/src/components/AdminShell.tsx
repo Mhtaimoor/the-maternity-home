@@ -21,11 +21,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   if (pathname === '/login') return <>{children}</>;
 
   return (
-    <div className="container-fluid tmh-shell">
-      <div className="row g-0">
-        <aside className="col-lg-2 tmh-sidebar">
-          <div className="tmh-brand fs-4 mb-1 px-2">TMH Admin</div>
-          <div className="text-secondary small px-2 mb-3">The Maternity Home</div>
+    <div className="d-flex tmh-shell">
+      <aside className="tmh-sidebar">
+        <div className="tmh-sidebar-brand">
+          <div className="tmh-brand fs-4 mb-0">TMH Admin</div>
+          <div className="tmh-meta">The Maternity Home operations</div>
+        </div>
+        <nav className="flex-grow-1">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -33,22 +35,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               className={`tmh-side-link ${pathname.startsWith(l.href) ? 'active' : ''}`}
             >
               <i className={`bi ${l.icon}`} />
-              {l.label}
+              <span>{l.label}</span>
             </Link>
           ))}
-          <button
-            className="tmh-side-link w-100 border-0 bg-transparent mt-3"
-            onClick={() => {
-              clearTokens();
-              router.push('/login');
-            }}
-          >
-            <i className="bi bi-box-arrow-right" />
-            Log out
-          </button>
-        </aside>
-        <main className="col-lg-10 tmh-main">{children}</main>
-      </div>
+        </nav>
+        <button
+          className="tmh-side-link w-100 border-0 bg-transparent mt-2"
+          onClick={() => {
+            clearTokens();
+            router.push('/login');
+          }}
+        >
+          <i className="bi bi-box-arrow-right" />
+          <span>Log out</span>
+        </button>
+      </aside>
+      <main className="tmh-main">{children}</main>
     </div>
   );
 }

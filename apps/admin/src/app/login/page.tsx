@@ -33,7 +33,7 @@ export default function LoginPage() {
     <div className="tmh-login-wrap">
       <form className="tmh-login-card tmh-form" onSubmit={onSubmit}>
         <div className="tmh-brand fs-3 mb-1">The Maternity Home</div>
-        <div className="text-secondary mb-4">Admin portal sign-in</div>
+        <div className="tmh-meta mb-4">Operations portal · secure staff access</div>
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -49,7 +49,7 @@ export default function LoginPage() {
         </div>
         {error ? <div className="alert alert-danger py-2">{error}</div> : null}
         <button className="btn btn-tmh w-100" disabled={busy} type="submit">
-          Sign in
+          {busy ? 'Signing in…' : 'Sign in'}
         </button>
         <p className="small text-secondary mt-3 mb-0">
           Seed owner: owner@thematernityhome.pk / Admin123!

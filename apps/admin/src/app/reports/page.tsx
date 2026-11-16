@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPkr, getTokens } from '../../lib/api';
+import { DataPanel, DataTable, EmptyState, PageHeader, StatusBadge } from '../../components/ui';
 
 export default function ReportsPage() {
   const router = useRouter();
@@ -24,32 +25,43 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <h1 className="tmh-brand h2 mb-4">Reports</h1>
+      <PageHeader title="Reports" subtitle="Status mix and revenue by day" />
       <div className="row g-3">
-        <div className="col-md-4">
-          <div className="tmh-panel">
-            <h2 className="h5">Orders by status</h2>
-            <table className="table tmh-table mb-0">
-              <tbody>
-                {byStatus.map((r) => (
-                  <tr key={r.status}><td>{r.status}</td><td className="text-end fw-semibold">{r.count}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="col-lg-4">
+          <DataPanel title="Orders by status" footer={`${byStatus.length} statuses`}>
+            <DataTable
+              minWidth={320}
+              headers={[{ label: 'Status' }, { label: 'Count', className: 'text-end' }]}
+              empty={<EmptyState title="No order data" />}
+            >
+              {byStatus.map((r) => (
+                <tr key={r.status}>
+                  <td><StatusBadge value={r.status} /></td>
+                  <td className="text-end fw-semibold">{r.count}</td>
+                </tr>
+              ))}
+            </DataTable>
+          </DataPanel>
         </div>
-        <div className="col-md-8">
-          <div className="tmh-panel">
-            <h2 className="h5">Sales by date</h2>
-            <table className="table tmh-table mb-0">
-              <thead><tr><th>Date</th><th>Orders</th><th className="text-end">Revenue</th></tr></thead>
-              <tbody>
-                {sales.map((r) => (
-                  <tr key={r.date}><td>{r.date}</td><td>{r.orders}</td><td className="text-end">{formatPkr(r.revenue)}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="col-lg-8">
+          <DataPanel title="Sales by date" footer={`${sales.length} days`}>
+            <DataTable
+              headers={[
+                { label: 'Date' },
+                { label: 'Orders', className: 'text-center' },
+                { label: 'Revenue', className: 'text-end' },
+              ]}
+              empty={<EmptyState icon="bi-graph-up" title="No sales yet" />}
+            >
+              {sales.map((r) => (
+                <tr key={r.date}>
+                  <td className="fw-semibold">{r.date}</td>
+                  <td className="text-center">{r.orders}</td>
+                  <td className="text-end fw-semibold">{formatPkr(r.revenue)}</td>
+                </tr>
+              ))}
+            </DataTable>
+          </DataPanel>
         </div>
       </div>
     </div>

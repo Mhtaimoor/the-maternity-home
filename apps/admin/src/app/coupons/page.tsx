@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, getTokens } from '../../lib/api';
+import { DataPanel, DataTable, EmptyState, PageHeader, StatusBadge } from '../../components/ui';
 
 export default function CouponsPage() {
   const router = useRouter();
@@ -29,37 +30,63 @@ export default function CouponsPage() {
         minOrder: Number(form.minOrder),
       }),
     });
+    setForm({ code: '', type: 'PERCENT', value: 10, minOrder: 0 });
     await load();
   }
 
   return (
     <div>
-      <h1 className="tmh-brand h2 mb-4">Coupons</h1>
-      <div className="row g-3">
-        <div className="col-md-4">
-          <form className="tmh-panel tmh-form" onSubmit={save}>
-            <input className="form-control mb-2" required placeholder="CODE" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
-            <select className="form-select mb-2" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-              <option value="PERCENT">Percent</option>
-              <option value="FIXED">Fixed</option>
-            </select>
-            <input className="form-control mb-2" type="number" value={form.value} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} />
-            <input className="form-control mb-3" type="number" value={form.minOrder} onChange={(e) => setForm({ ...form, minOrder: Number(e.target.value) })} />
+      <PageHeader title="Coupons" subtitle="Promotions with usage tracking" />
+      <div className="tmh-split">
+        <DataPanel title="Create coupon">
+          <form className="tmh-panel-body tmh-form" onSubmit={save}>
+            <div className="mb-2">
+              <label className="form-label">Code</label>
+              <input className="form-control" required value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Type</label>
+              <select className="form-select" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                <option value="PERCENT">Percent</option>
+                <option value="FIXED">Fixed</option>
+              </select>
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Value</label>
+              <input className="form-control" type="number" value={form.value} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Minimum order</label>
+              <input className="form-control" type="number" value={form.minOrder} onChange={(e) => setForm({ ...form, minOrder: Number(e.target.value) })} />
+            </div>
             <button className="btn btn-tmh w-100" type="submit">Save coupon</button>
           </form>
-        </div>
-        <div className="col-md-8">
-          <div className="tmh-panel">
-            <table className="table tmh-table mb-0">
-              <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Used</th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}><td>{r.code}</td><td>{r.type}</td><td>{r.value}</td><td>{r.usedCount}/{r.usageLimit ?? '∞'}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        </DataPanel>
+        <DataPanel title="Coupon table" footer={`${rows.length} coupons`}>
+          <DataTable
+            minWidth={560}
+            headers={[
+              { label: 'Code' },
+              { label: 'Type' },
+              { label: 'Value' },
+              { label: 'Min order' },
+              { label: 'Usage' },
+              { label: 'Status' },
+            ]}
+            empty={<EmptyState icon="bi-ticket" title="No coupons yet" />}
+          >
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="fw-semibold">{r.code}</td>
+                <td>{r.type}</td>
+                <td>{r.type === 'PERCENT' ? `${r.value}%` : r.value}</td>
+                <td>{r.minOrder}</td>
+                <td>{r.usedCount}/{r.usageLimit ?? '∞'}</td>
+                <td><StatusBadge value={r.active ? 'ACTIVE' : 'DRAFT'} /></td>
+              </tr>
+            ))}
+          </DataTable>
+        </DataPanel>
       </div>
     </div>
   );

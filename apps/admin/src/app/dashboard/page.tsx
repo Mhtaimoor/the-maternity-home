@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPkr, getTokens } from '../../lib/api';
+import { DataPanel, DataTable, EmptyState, PageHeader, SoftLink, StatusBadge } from '../../components/ui';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -23,93 +25,99 @@ export default function DashboardPage() {
   }, [router]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!data) return <div className="text-secondary">Loading dashboard…</div>;
+  if (!data) return <div className="tmh-meta">Loading dashboard…</div>;
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <div className="text-secondary">Overview</div>
-          <h1 className="tmh-brand h2 mb-0">Dashboard</h1>
-        </div>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/hero-maternity.jpg" alt="" className="rounded-4 d-none d-md-block" style={{ width: 140, height: 72, objectFit: 'cover' }} />
-      </div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Today’s pulse across orders, stock and sales"
+        actions={
+          <>
+            <Link href="/orders" className="btn btn-tmh-outline btn-sm">
+              Open orders
+            </Link>
+            <Link href="/products" className="btn btn-tmh btn-sm">
+              Manage products
+            </Link>
+          </>
+        }
+      />
 
-      <div className="row g-3 mb-4">
-        <div className="col-md-4">
-          <div className="tmh-stat">
-            <div className="tmh-stat-label">Today’s orders</div>
-            <div className="tmh-stat-value">{data.todayOrders}</div>
+      <div className="row g-3 mb-3">
+        {[
+          { label: 'Today’s orders', value: data.todayOrders, icon: 'bi-bag' },
+          { label: 'Pending queue', value: data.pendingOrders, icon: 'bi-hourglass-split' },
+          { label: 'Paid sales today', value: formatPkr(data.todaySales), icon: 'bi-cash-coin' },
+        ].map((s) => (
+          <div className="col-md-4" key={s.label}>
+            <div className="tmh-stat">
+              <div className="tmh-stat-label">
+                <i className={`bi ${s.icon}`} /> {s.label}
+              </div>
+              <div className="tmh-stat-value">{s.value}</div>
+            </div>
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="tmh-stat">
-            <div className="tmh-stat-label">Pending</div>
-            <div className="tmh-stat-value">{data.pendingOrders}</div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="tmh-stat">
-            <div className="tmh-stat-label">Paid sales today</div>
-            <div className="tmh-stat-value">{formatPkr(data.todaySales)}</div>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className="row g-3">
-        <div className="col-lg-5">
-          <div className="tmh-panel h-100">
-            <h2 className="h5 mb-3">Low stock</h2>
-            <div className="table-responsive">
-              <table className="table tmh-table align-middle mb-0">
-                <tbody>
-                  {data.lowStock?.length ? (
-                    data.lowStock.map((r: any) => (
-                      <tr key={r.sku}>
-                        <td>
-                          {r.productName}
-                          <div className="text-secondary small">{r.variantName}</div>
-                        </td>
-                        <td className="text-end fw-semibold">{r.available}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td>None</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="col-xl-5">
+          <DataPanel title="Low stock alerts" footer={`${data.lowStock?.length || 0} items need attention`}>
+            <DataTable
+              minWidth={480}
+              headers={[
+                { label: 'Product' },
+                { label: 'Available', className: 'text-end' },
+              ]}
+              empty={<EmptyState icon="bi-check2-circle" title="Stock looks healthy" text="No low-stock variants right now." />}
+            >
+              {data.lowStock?.map((r: any) => (
+                <tr key={r.sku}>
+                  <td>
+                    <div className="fw-semibold">{r.productName}</div>
+                    <div className="tmh-meta">{r.variantName} · {r.sku}</div>
+                  </td>
+                  <td className="text-end">
+                    <StatusBadge value={r.available <= 2 ? 'PENDING' : 'ACTIVE'} />
+                    <div className="fw-semibold mt-1">{r.available}</div>
+                  </td>
+                </tr>
+              ))}
+            </DataTable>
+          </DataPanel>
         </div>
-        <div className="col-lg-7">
-          <div className="tmh-panel h-100">
-            <h2 className="h5 mb-3">Recent orders</h2>
-            <div className="table-responsive">
-              <table className="table tmh-table align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>Order</th>
-                    <th>Status</th>
-                    <th className="text-end">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.recentOrders.map((o: any) => (
-                    <tr key={o.id}>
-                      <td>{o.orderNumber}</td>
-                      <td>
-                        <span className="badge rounded-pill text-bg-success">{o.status}</span>
-                      </td>
-                      <td className="text-end">{formatPkr(o.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="col-xl-7">
+          <DataPanel
+            title="Recent orders"
+            actions={
+              <Link href="/orders" className="btn btn-tmh-ghost btn-sm">
+                View all
+              </Link>
+            }
+          >
+            <DataTable
+              headers={[
+                { label: 'Order' },
+                { label: 'Status' },
+                { label: 'Total', className: 'text-end' },
+              ]}
+              empty={<EmptyState title="No orders yet" text="New checkouts will appear here." />}
+            >
+              {data.recentOrders?.map((o: any) => (
+                <tr key={o.id}>
+                  <td>
+                    <SoftLink href={`/orders/${o.id}`}>{o.orderNumber}</SoftLink>
+                    <div className="tmh-meta">{new Date(o.createdAt).toLocaleString()}</div>
+                  </td>
+                  <td>
+                    <StatusBadge value={o.status} />
+                  </td>
+                  <td className="text-end fw-semibold">{formatPkr(o.total)}</td>
+                </tr>
+              ))}
+            </DataTable>
+          </DataPanel>
         </div>
       </div>
     </div>
