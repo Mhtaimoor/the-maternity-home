@@ -24,6 +24,16 @@ body.tmh-body {
   min-height: 100vh;
 }
 
+body.tmh-body a {
+  color: var(--tmh-sage);
+  text-decoration-color: rgba(47, 111, 94, 0.35);
+  text-underline-offset: 0.18em;
+}
+
+body.tmh-body a:hover {
+  color: var(--tmh-sage-deep);
+}
+
 .tmh-brand {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
@@ -51,9 +61,16 @@ body.tmh-body {
   flex-shrink: 0;
 }
 
+.tmh-navbar .navbar-brand,
+.tmh-navbar .navbar-brand:hover {
+  text-decoration: none;
+  color: var(--tmh-ink) !important;
+}
+
 .tmh-nav-link {
   color: var(--tmh-ink-soft) !important;
   font-weight: 500;
+  text-decoration: none !important;
 }
 
 .tmh-nav-link:hover,
@@ -73,6 +90,7 @@ body.tmh-body {
   border-radius: 999px;
   font-weight: 600;
   padding: 0.75rem 1.35rem;
+  text-decoration: none;
 }
 
 .btn-tmh-outline {
@@ -85,6 +103,44 @@ body.tmh-body {
   font-weight: 600;
   padding: 0.75rem 1.35rem;
   background: transparent;
+  text-decoration: none;
+}
+
+/* High-contrast CTAs for photo heroes (sage blends into the green image). */
+.btn-tmh-hero {
+  background: #f7f2ea;
+  border: 1px solid #f7f2ea;
+  color: var(--tmh-ink) !important;
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 0.8rem 1.45rem;
+  text-decoration: none !important;
+  box-shadow: 0 10px 28px rgba(8, 20, 17, 0.28);
+}
+
+.btn-tmh-hero:hover,
+.btn-tmh-hero:focus {
+  background: #fff;
+  border-color: #fff;
+  color: var(--tmh-sage-deep) !important;
+}
+
+.btn-tmh-hero-ghost {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.88);
+  color: #fff !important;
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.8rem 1.45rem;
+  text-decoration: none !important;
+  backdrop-filter: blur(6px);
+}
+
+.btn-tmh-hero-ghost:hover,
+.btn-tmh-hero-ghost:focus {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #fff;
+  color: #fff !important;
 }
 
 .tmh-hero {
@@ -110,7 +166,8 @@ body.tmh-body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(18, 40, 35, 0.15) 0%, rgba(18, 40, 35, 0.72) 100%);
+    linear-gradient(105deg, rgba(12, 28, 24, 0.72) 0%, rgba(12, 28, 24, 0.38) 48%, rgba(12, 28, 24, 0.18) 100%),
+    linear-gradient(180deg, rgba(12, 28, 24, 0.2) 0%, rgba(12, 28, 24, 0.78) 100%);
 }
 
 .tmh-hero-content {
@@ -119,13 +176,19 @@ body.tmh-body {
   padding: 4.5rem 0 3.5rem;
   max-width: 40rem;
   animation: tmhRise 0.8s ease both;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.28);
+}
+
+.tmh-hero-content .lead {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
 }
 
 .tmh-hero-kicker {
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 0.78rem;
-  opacity: 0.88;
+  color: rgba(255, 255, 255, 0.92);
   margin-bottom: 0.85rem;
 }
 
@@ -186,6 +249,21 @@ body.tmh-body {
   background: rgba(255, 255, 255, 0.45);
   padding: 2.5rem 0;
   margin-top: 2rem;
+}
+
+.tmh-footer a {
+  color: var(--tmh-ink-soft);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.tmh-footer a:hover {
+  color: var(--tmh-sage);
+}
+
+.tmh-footer .fw-semibold {
+  color: var(--tmh-ink);
 }
 
 .tmh-form .form-control,

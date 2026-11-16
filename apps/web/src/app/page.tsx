@@ -37,10 +37,10 @@ export default async function HomePage() {
               delivery across Pakistan.
             </p>
             <div className="d-flex flex-wrap gap-2">
-              <Link className="btn btn-tmh" href="/shop">
+              <Link className="btn btn-tmh-hero" href="/shop">
                 Shop the collection
               </Link>
-              <Link className="btn btn-light rounded-pill px-4 fw-semibold" href="/pages/about">
+              <Link className="btn btn-tmh-hero-ghost" href="/pages/about">
                 Our story
               </Link>
             </div>
