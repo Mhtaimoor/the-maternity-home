@@ -29,7 +29,7 @@ export default function DashboardPage() {
   if (!data) return <div className="tmh-meta">Loading dashboard…</div>;
 
   return (
-    <div>
+    <div className="tmh-animate-page">
       <PageHeader
         title="Dashboard"
         subtitle="Today’s pulse across orders, stock and sales"

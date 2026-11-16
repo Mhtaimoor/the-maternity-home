@@ -26,13 +26,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="tmh-sidebar-brand">
           <div className="d-flex align-items-center gap-2 mb-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/brand-mark.png" alt="" width={40} height={40} className="tmh-brand-mark" />
+            <img src="/images/brand-mark.png" alt="" width={42} height={42} className="tmh-brand-mark" />
             <div>
-              <div className="tmh-brand fs-5 mb-0">TMH Admin</div>
-              <div className="tmh-meta">The Maternity Home</div>
+              <div className="tmh-brand fs-5 mb-0 text-white">TMH Admin</div>
+              <div className="tmh-meta small">The Maternity Home</div>
             </div>
           </div>
         </div>
+
         <nav className="flex-grow-1">
           {links.map((l) => (
             <Link
@@ -45,17 +46,32 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
-        <button
-          className="tmh-side-link w-100 border-0 bg-transparent mt-2"
-          onClick={() => {
-            clearTokens();
-            router.push('/login');
-          }}
-        >
-          <i className="bi bi-box-arrow-right" />
-          <span>Log out</span>
-        </button>
+
+        <div className="pt-2 border-top" style={{ borderColor: 'var(--tmh-line-soft)' }}>
+          <a
+            href="http://localhost:3000"
+            target="_blank"
+            rel="noreferrer"
+            className="tmh-side-link"
+            title="Open customer storefront in new tab"
+          >
+            <i className="bi bi-box-arrow-up-right" />
+            <span>View Storefront</span>
+          </a>
+
+          <button
+            className="tmh-side-link w-100 border-0 bg-transparent text-start"
+            onClick={() => {
+              clearTokens();
+              router.push('/login');
+            }}
+          >
+            <i className="bi bi-box-arrow-right text-danger" />
+            <span className="text-danger">Log Out</span>
+          </button>
+        </div>
       </aside>
+
       <main className="tmh-main">{children}</main>
     </div>
   );

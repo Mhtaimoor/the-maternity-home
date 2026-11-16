@@ -8,6 +8,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('owner@thematernityhome.pk');
   const [password, setPassword] = useState('Admin123!');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -18,12 +19,12 @@ export default function LoginPage() {
     try {
       const data = await api<any>('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
       setTokens(data.accessToken, data.refreshToken);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Login failed. Please verify credentials.');
     } finally {
       setBusy(false);
     }
@@ -32,32 +33,83 @@ export default function LoginPage() {
   return (
     <div className="tmh-login-wrap">
       <form className="tmh-login-card tmh-form" onSubmit={onSubmit}>
-        <div className="d-flex align-items-center gap-2 mb-1">
+        <div className="d-flex align-items-center gap-3 mb-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/brand-mark.png" alt="" width={48} height={48} className="tmh-brand-mark" />
-          <div className="tmh-brand fs-3 mb-0">The Maternity Home</div>
+          <img src="/images/brand-mark.png" alt="" width={52} height={52} className="tmh-brand-mark" />
+          <div>
+            <div className="tmh-brand fs-3 mb-0 text-white">The Maternity Home</div>
+            <div className="tmh-meta">Staff Operations & Order Portal</div>
+          </div>
         </div>
-        <div className="tmh-meta mb-4">Operations portal · secure staff access</div>
+
+        <div className="border-top my-3" style={{ borderColor: 'var(--tmh-line-soft)' }} />
+
         <div className="mb-3">
-          <label className="form-label">Email</label>
-          <input className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label">Staff Email</label>
           <input
             className="form-control"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@thematernityhome.pk"
           />
         </div>
-        {error ? <div className="alert alert-danger py-2">{error}</div> : null}
-        <button className="btn btn-tmh w-100" disabled={busy} type="submit">
-          {busy ? 'Signing in…' : 'Sign in'}
+
+        <div className="mb-3">
+          <label className="form-label">
+            <span>Password</span>
+            <button
+              type="button"
+              className="btn btn-link p-0 text-decoration-none small text-success"
+              style={{ fontSize: '0.8rem' }}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'} me-1`} />
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </label>
+          <div className="position-relative">
+            <input
+              className="form-control"
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="alert alert-danger py-2 mb-3">
+            <i className="bi bi-exclamation-circle-fill me-2" />
+            {error}
+          </div>
+        )}
+
+        <button className="btn btn-tmh w-100 py-2 fs-6" disabled={busy} type="submit">
+          {busy ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+              Signing in…
+            </>
+          ) : (
+            <>
+              <i className="bi bi-shield-lock me-2" />
+              Sign In to Admin Portal
+            </>
+          )}
         </button>
-        <p className="small text-secondary mt-3 mb-0">
-          Seed owner: owner@thematernityhome.pk / Admin123!
-        </p>
+
+        <div className="mt-3 p-2 rounded-3 text-center" style={{ background: 'rgba(0, 0, 0, 0.25)' }}>
+          <div className="tmh-meta small">
+            Default Owner: <code>owner@thematernityhome.pk</code>
+          </div>
+          <div className="tmh-meta small">
+            Password: <code>Admin123!</code>
+          </div>
+        </div>
       </form>
     </div>
   );

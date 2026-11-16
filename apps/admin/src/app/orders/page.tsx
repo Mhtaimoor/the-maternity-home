@@ -12,6 +12,17 @@ import {
   StatusBadge,
 } from '../../components/ui';
 
+const STATUS_TABS = [
+  { id: '', label: 'All Orders' },
+  { id: 'NEW', label: 'New' },
+  { id: 'CONFIRMED', label: 'Confirmed' },
+  { id: 'PROCESSING', label: 'Processing' },
+  { id: 'PACKED', label: 'Packed' },
+  { id: 'DISPATCHED', label: 'Dispatched' },
+  { id: 'DELIVERED', label: 'Delivered' },
+  { id: 'CANCELLED', label: 'Cancelled' },
+];
+
 export default function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
@@ -19,12 +30,13 @@ export default function OrdersPage() {
   const [q, setQ] = useState('');
   const [status, setStatus] = useState('');
 
-  async function load() {
+  async function load(newStatus?: string) {
     setLoading(true);
     try {
+      const activeStatus = newStatus !== undefined ? newStatus : status;
       const qs = new URLSearchParams();
       if (q) qs.set('q', q);
-      if (status) qs.set('status', status);
+      if (activeStatus) qs.set('status', activeStatus);
       setOrders(await api<any[]>(`/admin/orders?${qs}`));
     } finally {
       setLoading(false);
@@ -36,17 +48,24 @@ export default function OrdersPage() {
     else void load().catch(() => router.push('/login'));
   }, [router]);
 
+  function handleTabChange(tabId: string) {
+    setStatus(tabId);
+    void load(tabId);
+  }
+
   const summary = useMemo(() => {
-    const pending = orders.filter((o) => ['NEW', 'CONFIRMED', 'PROCESSING', 'PACKED'].includes(o.status)).length;
+    const pending = orders.filter((o) =>
+      ['NEW', 'CONFIRMED', 'PROCESSING', 'PACKED'].includes(o.status),
+    ).length;
     const unpaid = orders.filter((o) => o.paymentStatus !== 'PAID').length;
     return { pending, unpaid, total: orders.length };
   }, [orders]);
 
   return (
-    <div>
+    <div className="tmh-animate-page">
       <PageHeader
-        title="Orders"
-        subtitle="Search, filter and fulfil the daily order desk"
+        title="Orders & Fulfilment"
+        subtitle="Search, verify, dispatch and track customer orders across Pakistan"
         actions={
           <button className="btn btn-tmh-outline btn-sm" onClick={() => void load()}>
             <i className="bi bi-arrow-clockwise me-1" /> Refresh
@@ -55,79 +74,124 @@ export default function OrdersPage() {
       />
 
       <div className="row g-3 mb-3">
-        <div className="col-md-4"><div className="tmh-stat"><div className="tmh-stat-label">Visible orders</div><div className="tmh-stat-value">{summary.total}</div></div></div>
-        <div className="col-md-4"><div className="tmh-stat"><div className="tmh-stat-label">In progress</div><div className="tmh-stat-value">{summary.pending}</div></div></div>
-        <div className="col-md-4"><div className="tmh-stat"><div className="tmh-stat-label">Awaiting payment</div><div className="tmh-stat-value">{summary.unpaid}</div></div></div>
+        <div className="col-md-4">
+          <div className="tmh-stat">
+            <div className="tmh-stat-label">
+              <i className="bi bi-bag text-success" /> Visible Orders
+            </div>
+            <div className="tmh-stat-value">{summary.total}</div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="tmh-stat">
+            <div className="tmh-stat-label">
+              <i className="bi bi-hourglass-split text-warning" /> In Progress
+            </div>
+            <div className="tmh-stat-value">{summary.pending}</div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="tmh-stat">
+            <div className="tmh-stat-label">
+              <i className="bi bi-cash-coin text-info" /> Awaiting Payment
+            </div>
+            <div className="tmh-stat-value">{summary.unpaid}</div>
+          </div>
+        </div>
       </div>
 
       <DataPanel
-        title="Order queue"
-        footer={loading ? 'Loading…' : `${orders.length} result${orders.length === 1 ? '' : 's'}`}
+        title="Order Queue"
+        footer={loading ? 'Updating…' : `${orders.length} order${orders.length === 1 ? '' : 's'} displayed`}
         toolbar={
-          <div className="tmh-toolbar tmh-form">
-            <div style={{ minWidth: 220, flex: 1 }}>
-              <label className="form-label">Search</label>
-              <input
-                className="form-control"
-                placeholder="Order #, name or phone"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && void load()}
-              />
+          <div className="w-100">
+            {/* Status Tabs */}
+            <div className="tmh-tabs mb-2">
+              {STATUS_TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`tmh-tab ${status === t.id ? 'active' : ''}`}
+                  onClick={() => handleTabChange(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-            <div style={{ minWidth: 180 }}>
-              <label className="form-label">Status</label>
-              <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="">All statuses</option>
-                {['NEW', 'CONFIRMED', 'PROCESSING', 'PACKED', 'DISPATCHED', 'DELIVERED', 'CANCELLED'].map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
+
+            {/* Search Input Bar */}
+            <div className="tmh-toolbar tmh-form p-0 bg-transparent border-0">
+              <div style={{ minWidth: 260, flex: 1 }}>
+                <input
+                  className="form-control"
+                  placeholder="Search by Order #, customer name, phone or address…"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && void load()}
+                />
+              </div>
+              <button className="btn btn-tmh" onClick={() => void load()}>
+                <i className="bi bi-search me-1" /> Search
+              </button>
+              {q && (
+                <button
+                  className="btn btn-tmh-ghost"
+                  onClick={() => {
+                    setQ('');
+                    setTimeout(() => void load(), 0);
+                  }}
+                >
+                  Clear
+                </button>
+              )}
             </div>
-            <button className="btn btn-tmh" onClick={() => void load()}>
-              Apply filters
-            </button>
           </div>
         }
       >
         <DataTable
           headers={[
-            { label: 'Order' },
+            { label: 'Order #' },
             { label: 'Customer' },
             { label: 'City' },
             { label: 'Status' },
             { label: 'Payment' },
             { label: 'Total', className: 'text-end' },
-            { label: '', className: 'text-end', width: '110px' },
+            { label: 'Action', className: 'text-end', width: '110px' },
           ]}
           empty={
             <EmptyState
               icon="bi-bag-x"
-              title={loading ? 'Loading orders…' : 'No orders match'}
-              text="Try clearing filters or wait for a new checkout."
+              title={loading ? 'Loading orders…' : 'No orders found'}
+              text="Try selecting another status tab or clear your search."
             />
           }
         >
           {orders.map((o) => (
             <tr key={o.id}>
               <td>
-                <SoftLink href={`/orders/${o.id}`}>{o.orderNumber}</SoftLink>
+                <SoftLink href={`/orders/${o.id}`}>
+                  <span className="fw-bold">{o.orderNumber}</span>
+                </SoftLink>
                 <div className="tmh-meta">{new Date(o.createdAt).toLocaleString()}</div>
               </td>
               <td>
-                <div className="fw-semibold">{o.customerName}</div>
+                <div className="fw-semibold text-white">{o.customerName}</div>
                 <div className="tmh-meta">{o.customerPhone}</div>
               </td>
-              <td>{o.city}</td>
-              <td><StatusBadge value={o.status} /></td>
+              <td className="text-white">{o.city}</td>
               <td>
-                <div>{o.paymentMethod}</div>
+                <StatusBadge value={o.status} />
+              </td>
+              <td>
+                <div className="small text-white fw-semibold mb-1">{o.paymentMethod}</div>
                 <StatusBadge value={o.paymentStatus} />
               </td>
-              <td className="text-end fw-semibold">{formatPkr(o.total)}</td>
+              <td className="text-end fw-semibold text-white fs-6">
+                {formatPkr(o.total)}
+              </td>
               <td className="text-end">
                 <SoftLink href={`/orders/${o.id}`}>
-                  <span className="btn btn-tmh-ghost btn-sm">Open</span>
+                  <span className="btn btn-tmh btn-sm">Open</span>
                 </SoftLink>
               </td>
             </tr>

@@ -73,6 +73,22 @@ export class CatalogueService {
     return category;
   }
 
+  async deleteCategory(id: string, actorId?: string) {
+    const existing = await this.prisma.category.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Category not found');
+    await this.prisma.category.delete({ where: { id } });
+    if (actorId) {
+      await this.audit.log({
+        actorId,
+        action: 'DELETE_CATEGORY',
+        entity: 'Category',
+        entityId: id,
+        summary: `Deleted ${existing.name}`,
+      });
+    }
+    return { success: true };
+  }
+
   async listProducts(query: {
     q?: string;
     category?: string;
@@ -237,30 +253,73 @@ export class CatalogueService {
 
   async updateProduct(
     id: string,
-    data: Partial<{
-      name: string;
-      description: string;
-      brand: string;
-      categoryId: string | null;
-      costPrice: number;
-      sellingPrice: number;
-      salePrice: number | null;
-      lowStockThreshold: number;
-      status: string;
-      featured: boolean;
-    }>,
+    data: any,
     actorId?: string,
   ) {
-    const existing = await this.prisma.product.findUnique({ where: { id } });
+    const existing = await this.prisma.product.findUnique({
+      where: { id },
+      include: { variants: true },
+    });
     if (!existing) throw new NotFoundException('Product not found');
+
+    const { images, stock, variants, id: _id, ...scalarData } = data;
+
+    const updateData: any = {};
+    if (scalarData.name !== undefined) {
+      updateData.name = scalarData.name;
+      updateData.slug = slugify(scalarData.name);
+    }
+    if (scalarData.sku !== undefined) updateData.sku = scalarData.sku;
+    if (scalarData.description !== undefined) updateData.description = scalarData.description;
+    if (scalarData.brand !== undefined) updateData.brand = scalarData.brand;
+    if (scalarData.categoryId !== undefined) updateData.categoryId = scalarData.categoryId || null;
+    if (scalarData.costPrice !== undefined) updateData.costPrice = Number(scalarData.costPrice);
+    if (scalarData.sellingPrice !== undefined) updateData.sellingPrice = Number(scalarData.sellingPrice);
+    if (scalarData.salePrice !== undefined) {
+      updateData.salePrice =
+        scalarData.salePrice === null || scalarData.salePrice === ''
+          ? null
+          : Number(scalarData.salePrice);
+    }
+    if (scalarData.lowStockThreshold !== undefined) {
+      updateData.lowStockThreshold = Number(scalarData.lowStockThreshold);
+    }
+    if (scalarData.status !== undefined) updateData.status = scalarData.status;
+    if (scalarData.featured !== undefined) updateData.featured = Boolean(scalarData.featured);
+
+    if (images !== undefined && Array.isArray(images)) {
+      await this.prisma.productImage.deleteMany({ where: { productId: id } });
+      if (images.length > 0) {
+        await this.prisma.productImage.createMany({
+          data: images
+            .filter((img: any) => img && (typeof img === 'string' ? img : img.url))
+            .map((img: any, idx: number) => ({
+              productId: id,
+              url: typeof img === 'string' ? img : img.url,
+              alt: typeof img === 'string' ? scalarData.name || existing.name : img.alt || scalarData.name || existing.name,
+              sortOrder: idx,
+            })),
+        });
+      }
+    }
+
+    if (stock !== undefined && existing.variants[0]?.id) {
+      await this.prisma.productVariant.update({
+        where: { id: existing.variants[0].id },
+        data: { stock: Math.max(0, Number(stock)) },
+      });
+    }
+
     const product = await this.prisma.product.update({
       where: { id },
-      data: {
-        ...data,
-        ...(data.name ? { slug: slugify(data.name) } : {}),
+      data: updateData,
+      include: {
+        category: true,
+        images: { orderBy: { sortOrder: 'asc' } },
+        variants: true,
       },
-      include: { category: true, images: true, variants: true },
     });
+
     if (actorId) {
       await this.audit.log({
         actorId,
@@ -271,6 +330,22 @@ export class CatalogueService {
       });
     }
     return this.mapProduct(product, true);
+  }
+
+  async deleteProduct(id: string, actorId?: string) {
+    const existing = await this.prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Product not found');
+    await this.prisma.product.delete({ where: { id } });
+    if (actorId) {
+      await this.audit.log({
+        actorId,
+        action: 'DELETE_PRODUCT',
+        entity: 'Product',
+        entityId: id,
+        summary: `Deleted ${existing.name}`,
+      });
+    }
+    return { success: true };
   }
 
   async adjustStock(

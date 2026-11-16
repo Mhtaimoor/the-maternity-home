@@ -24,7 +24,7 @@ export default function ReportsPage() {
   }, [router]);
 
   return (
-    <div>
+    <div className="tmh-animate-page">
       <PageHeader title="Reports" subtitle="Status mix and revenue by day" />
       <div className="row g-3">
         <div className="col-lg-4">

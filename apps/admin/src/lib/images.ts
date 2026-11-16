@@ -13,14 +13,30 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   'gifts-bundles': '/images/product-onesie.jpg',
 };
 
-export function productImage(product: {
+export const CATALOG_PRESET_IMAGES = [
+  { label: 'Maternity Pads (Organic Postpartum)', url: '/images/product-maternity-pads.jpg' },
+  { label: 'Organic Cotton Newborn Onesie', url: '/images/product-onesie.jpg' },
+  { label: 'Anti-Colic Feeding Bottle', url: '/images/product-bottle.jpg' },
+  { label: 'Postpartum & Mother Care Bundle', url: '/images/cat-maternity.jpg' },
+  { label: 'Newborn Welcome Essentials', url: '/images/cat-newborn.jpg' },
+  { label: 'Mother & Baby Hero Banner', url: '/images/hero-maternity.jpg' },
+];
+
+export function productImage(product?: {
   sku?: string | null;
-  images?: Array<{ url?: string | null }>;
-}) {
-  const local = product.sku ? PRODUCT_IMAGES[product.sku] : undefined;
+  images?: Array<{ url?: string | null }> | null;
+} | null) {
+  if (!product) return '/images/product-onesie.jpg';
   const remote = product.images?.[0]?.url;
+  if (remote && !remote.includes('placehold.co') && remote.trim().length > 0) {
+    return remote;
+  }
+  const local = product.sku ? PRODUCT_IMAGES[product.sku] : undefined;
   if (local) return local;
-  if (remote && !remote.includes('placehold.co')) return remote;
+  if (product.sku) {
+    const base = Object.keys(PRODUCT_IMAGES).find((key) => product.sku!.startsWith(key));
+    if (base && PRODUCT_IMAGES[base]) return PRODUCT_IMAGES[base];
+  }
   return '/images/product-onesie.jpg';
 }
 
@@ -31,7 +47,16 @@ export function productImageBySku(sku?: string | null) {
   return (base && PRODUCT_IMAGES[base]) || '/images/product-onesie.jpg';
 }
 
-export function categoryImage(slug?: string | null) {
-  if (!slug) return '/images/cat-newborn.jpg';
-  return CATEGORY_IMAGES[slug] || '/images/cat-maternity.jpg';
+export function categoryImage(
+  catOrSlug?: { slug?: string | null; imageUrl?: string | null } | string | null,
+) {
+  if (!catOrSlug) return '/images/cat-newborn.jpg';
+  if (typeof catOrSlug === 'object') {
+    if (catOrSlug.imageUrl && !catOrSlug.imageUrl.includes('placehold.co') && catOrSlug.imageUrl.trim().length > 0) {
+      return catOrSlug.imageUrl;
+    }
+    const slug = catOrSlug.slug;
+    return (slug && CATEGORY_IMAGES[slug]) || '/images/cat-maternity.jpg';
+  }
+  return CATEGORY_IMAGES[catOrSlug] || '/images/cat-maternity.jpg';
 }

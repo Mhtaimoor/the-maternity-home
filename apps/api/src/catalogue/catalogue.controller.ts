@@ -2,6 +2,7 @@ import { Role, ProductStatus } from '../common/constants';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -48,6 +49,13 @@ export class CatalogueController {
     },
   ) {
     return this.catalogue.upsertCategory(body, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.OWNER, Role.CONTENT_MANAGER)
+  @Delete('admin/categories/:id')
+  deleteCategory(@CurrentUser() user: { id: string }, @Param('id') id: string) {
+    return this.catalogue.deleteCategory(id, user.id);
   }
 
   @Get('products')
@@ -102,6 +110,13 @@ export class CatalogueController {
     @Body() body: any,
   ) {
     return this.catalogue.updateProduct(id, body, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.OWNER, Role.CONTENT_MANAGER)
+  @Delete('admin/products/:id')
+  deleteProduct(@CurrentUser() user: { id: string }, @Param('id') id: string) {
+    return this.catalogue.deleteProduct(id, user.id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -19,7 +19,7 @@ export default async function HomePage() {
   const banner = banners[0];
 
   return (
-    <main>
+    <main className="tmh-page-animate">
       <section className="tmh-hero">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="tmh-hero-media" src="/images/hero-maternity.jpg" alt="Mother and newborn" />
@@ -32,16 +32,16 @@ export default async function HomePage() {
             <h1 className="tmh-display display-3 text-white mb-3">
               {banner?.title || 'Care for every stage'}
             </h1>
-            <p className="lead text-white-50 mb-4">
+            <p className="lead mb-4">
               Soft essentials for maternity, postpartum and newborn days — shop with COD and tracked
               delivery across Pakistan.
             </p>
-            <div className="d-flex flex-wrap gap-2">
+            <div className="d-flex flex-wrap gap-3">
               <Link className="btn btn-tmh-hero" href="/shop">
-                Shop the collection
+                <i className="bi bi-bag-heart me-1" /> Shop the Collection
               </Link>
               <Link className="btn btn-tmh-hero-ghost" href="/pages/about">
-                Our story
+                Our Story
               </Link>
             </div>
           </div>
@@ -51,19 +51,19 @@ export default async function HomePage() {
       <section className="tmh-section container">
         <div className="tmh-trust">
           <div className="tmh-trust-item">
-            <i className="bi bi-truck fs-4 text-success" />
-            <div className="fw-semibold mt-2">COD in major cities</div>
-            <div className="text-secondary small">Lahore, Islamabad, Karachi and more</div>
+            <i className="bi bi-truck fs-3 text-success" />
+            <div className="fw-semibold mt-2 fs-5">COD Across Pakistan</div>
+            <div className="text-secondary small">Lahore, Karachi, Islamabad, Rawalpindi & nationwide</div>
           </div>
           <div className="tmh-trust-item">
-            <i className="bi bi-shield-check fs-4 text-success" />
-            <div className="fw-semibold mt-2">Thoughtful catalogue</div>
-            <div className="text-secondary small">Clear sizes, packs and stock status</div>
+            <i className="bi bi-shield-check fs-3 text-success" />
+            <div className="fw-semibold mt-2 fs-5">Curated Essentials</div>
+            <div className="text-secondary small">Postpartum pads, breathable cotton swaddles & anti-colic feeding</div>
           </div>
           <a className="tmh-trust-item text-decoration-none text-dark" href={STORE_WHATSAPP_URL} target="_blank" rel="noreferrer">
-            <i className="bi bi-whatsapp fs-4 text-success" />
-            <div className="fw-semibold mt-2">WhatsApp support</div>
-            <div className="text-secondary small">{STORE_PHONE_DISPLAY}</div>
+            <i className="bi bi-whatsapp fs-3 text-success" />
+            <div className="fw-semibold mt-2 fs-5">Instant WhatsApp Help</div>
+            <div className="text-secondary small">{STORE_PHONE_DISPLAY} · fast order support</div>
           </a>
         </div>
       </section>
@@ -72,22 +72,24 @@ export default async function HomePage() {
         <div className="d-flex justify-content-between align-items-end mb-4">
           <div>
             <div className="tmh-chip mb-2">Browse</div>
-            <h2 className="tmh-section-title h1 mb-0">Shop by category</h2>
+            <h2 className="tmh-section-title h1 mb-0">Shop by Category</h2>
           </div>
           <Link href="/shop" className="btn btn-tmh-outline btn-sm d-none d-md-inline-flex">
-            View all
+            View All Categories
           </Link>
         </div>
-        <div className="row g-3">
+        <div className="row g-4">
           {categories.map((c: any) => (
             <div className="col-6 col-md-4 col-lg-3" key={c.id}>
-              <Link href={`/shop?category=${c.slug}`} className="text-decoration-none text-dark">
+              <Link href={`/shop?category=${c.slug}`} className="text-decoration-none text-dark h-100 d-block">
                 <article className="tmh-card">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="tmh-card-img" src={categoryImage(c.slug)} alt={c.name} />
+                  <div className="tmh-card-img-wrap">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="tmh-card-img" src={categoryImage(c)} alt={c.name} />
+                  </div>
                   <div className="tmh-card-body">
-                    <div className="fw-semibold">{c.name}</div>
-                    <div className="text-secondary small">{c.description}</div>
+                    <div className="fw-semibold fs-6 mb-1">{c.name}</div>
+                    <div className="text-secondary small">{c.description || 'Browse collection'}</div>
                   </div>
                 </article>
               </Link>
@@ -100,20 +102,32 @@ export default async function HomePage() {
         <div className="d-flex justify-content-between align-items-end mb-4">
           <div>
             <div className="tmh-chip mb-2">Featured</div>
-            <h2 className="tmh-section-title h1 mb-0">Loved right now</h2>
+            <h2 className="tmh-section-title h1 mb-0">Loved Right Now</h2>
           </div>
+          <Link href="/shop" className="btn btn-tmh-outline btn-sm">
+            View All Products
+          </Link>
         </div>
-        <div className="row g-3">
+        <div className="row g-4">
           {products.map((p: any) => (
             <div className="col-6 col-lg-4" key={p.id}>
-              <Link href={`/product/${p.slug}`} className="text-decoration-none text-dark">
+              <Link href={`/product/${p.slug}`} className="text-decoration-none text-dark h-100 d-block">
                 <article className="tmh-card">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="tmh-card-img" src={productImage(p)} alt={p.name} />
+                  <div className="tmh-card-img-wrap">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="tmh-card-img" src={productImage(p)} alt={p.name} />
+                  </div>
                   <div className="tmh-card-body">
-                    <div className="text-secondary small">{p.brand}</div>
-                    <div className="fw-semibold">{p.name}</div>
-                    <div className="tmh-price mt-1">{formatPkr(p.displayPrice)}</div>
+                    <div className="text-secondary small fw-medium">{p.brand || 'The Maternity Home'}</div>
+                    <div className="fw-semibold fs-5 mt-1">{p.name}</div>
+                    <div className="d-flex align-items-baseline gap-2 mt-2">
+                      <div className="tmh-price">{formatPkr(p.displayPrice)}</div>
+                      {p.salePrice && (
+                        <div className="text-decoration-line-through text-muted small">
+                          {formatPkr(p.sellingPrice)}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </article>
               </Link>
