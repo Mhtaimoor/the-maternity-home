@@ -291,8 +291,31 @@ a { color: inherit; }
   --bs-btn-hover-border-color: var(--tmh-sage-deep);
   --bs-btn-color: #04110e;
   --bs-btn-hover-color: #04110e;
+  --bs-btn-disabled-bg: rgba(61, 155, 130, 0.45);
+  --bs-btn-disabled-border-color: transparent;
+  --bs-btn-disabled-color: #04110e;
+  background-color: var(--tmh-sage) !important;
+  border-color: var(--tmh-sage) !important;
+  color: #04110e !important;
   border-radius: 999px;
   font-weight: 700;
+}
+
+.btn-tmh:hover,
+.btn-tmh:focus,
+.btn-tmh:active,
+.btn-tmh.active {
+  background-color: var(--tmh-sage-deep) !important;
+  border-color: var(--tmh-sage-deep) !important;
+  color: #04110e !important;
+}
+
+.btn-tmh:disabled,
+.btn-tmh.disabled {
+  background-color: rgba(61, 155, 130, 0.45) !important;
+  border-color: transparent !important;
+  color: #04110e !important;
+  opacity: 1;
 }
 
 .btn-tmh-outline {
