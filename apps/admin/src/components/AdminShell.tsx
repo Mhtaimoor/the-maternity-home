@@ -5,14 +5,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { clearTokens } from '../lib/api';
 
 const links = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/orders', label: 'Orders' },
-  { href: '/products', label: 'Products' },
-  { href: '/categories', label: 'Categories' },
-  { href: '/delivery', label: 'Delivery' },
-  { href: '/coupons', label: 'Coupons' },
-  { href: '/content', label: 'Content' },
-  { href: '/reports', label: 'Reports' },
+  { href: '/dashboard', label: 'Dashboard', icon: 'bi-speedometer2' },
+  { href: '/orders', label: 'Orders', icon: 'bi-bag-check' },
+  { href: '/products', label: 'Products', icon: 'bi-box-seam' },
+  { href: '/categories', label: 'Categories', icon: 'bi-tags' },
+  { href: '/delivery', label: 'Delivery', icon: 'bi-truck' },
+  { href: '/coupons', label: 'Coupons', icon: 'bi-ticket-perforated' },
+  { href: '/content', label: 'Content', icon: 'bi-file-earmark-text' },
+  { href: '/reports', label: 'Reports', icon: 'bi-graph-up' },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -21,24 +21,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   if (pathname === '/login') return <>{children}</>;
 
   return (
-    <div className="shell">
-      <aside className="side">
-        <div className="brand">TMH Admin</div>
-        {links.map((l) => (
-          <Link key={l.href} href={l.href} className={pathname.startsWith(l.href) ? 'active' : ''}>
-            {l.label}
-          </Link>
-        ))}
-        <button
-          onClick={() => {
-            clearTokens();
-            router.push('/login');
-          }}
-        >
-          Log out
-        </button>
-      </aside>
-      <div className="main">{children}</div>
+    <div className="container-fluid tmh-shell">
+      <div className="row g-0">
+        <aside className="col-lg-2 tmh-sidebar">
+          <div className="tmh-brand fs-4 mb-1 px-2">TMH Admin</div>
+          <div className="text-secondary small px-2 mb-3">The Maternity Home</div>
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`tmh-side-link ${pathname.startsWith(l.href) ? 'active' : ''}`}
+            >
+              <i className={`bi ${l.icon}`} />
+              {l.label}
+            </Link>
+          ))}
+          <button
+            className="tmh-side-link w-100 border-0 bg-transparent mt-3"
+            onClick={() => {
+              clearTokens();
+              router.push('/login');
+            }}
+          >
+            <i className="bi bi-box-arrow-right" />
+            Log out
+          </button>
+        </aside>
+        <main className="col-lg-10 tmh-main">{children}</main>
+      </div>
     </div>
   );
 }

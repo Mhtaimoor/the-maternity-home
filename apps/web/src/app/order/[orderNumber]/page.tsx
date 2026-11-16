@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { api, formatPkr } from '../../../lib/api';
 
-export default function OrderConfirmationPage() {
+function OrderInner() {
   const params = useParams<{ orderNumber: string }>();
   const search = useSearchParams();
   const [order, setOrder] = useState<any>(null);
@@ -24,26 +24,48 @@ export default function OrderConfirmationPage() {
       .catch((e) => setError(e.message));
   }, [params.orderNumber, search]);
 
-  if (error) return <main className="section container error">{error}</main>;
-  if (!order) return <main className="section container muted">Loading…</main>;
+  if (error) {
+    return <div className="alert alert-danger">{error}</div>;
+  }
+  if (!order) return <div className="text-secondary">Loading confirmation…</div>;
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>Order confirmed</h1>
-      <p>
-        Order <strong>{order.orderNumber}</strong> · Status {order.status}
+    <div className="tmh-panel">
+      <div className="tmh-chip mb-3">Confirmed</div>
+      <h1 className="tmh-display h2">Thank you</h1>
+      <p className="lead">
+        Order <strong>{order.orderNumber}</strong> is {order.status}.
       </p>
-      <p className="muted">
+      <p className="text-secondary">
         Payment: {order.paymentMethod} ({order.paymentStatus}) · Total {formatPkr(order.total)}
       </p>
-      <ul>
+      <ul className="list-group list-group-flush mb-3">
         {order.items.map((i: any) => (
-          <li key={i.id}>
-            {i.productName} × {i.quantity} — {formatPkr(i.lineTotal)}
+          <li className="list-group-item px-0 d-flex justify-content-between" key={i.id}>
+            <span>
+              {i.productName} × {i.quantity}
+            </span>
+            <strong>{formatPkr(i.lineTotal)}</strong>
           </li>
         ))}
       </ul>
-      <p className="muted">We will confirm by phone/WhatsApp. Keep your order number for tracking.</p>
+      <div className="alert alert-success border-0 mb-0" style={{ background: 'rgba(47,111,94,0.1)' }}>
+        Keep your order number for tracking. We may confirm by phone or WhatsApp.
+      </div>
+    </div>
+  );
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <main className="tmh-section container">
+      <div className="row justify-content-center">
+        <div className="col-lg-7">
+          <Suspense fallback={<div className="text-secondary">Loading…</div>}>
+            <OrderInner />
+          </Suspense>
+        </div>
+      </div>
     </main>
   );
 }

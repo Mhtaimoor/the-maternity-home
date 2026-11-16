@@ -24,37 +24,34 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <h1>Reports</h1>
-      <h2>Orders by status</h2>
-      <table className="table">
-        <tbody>
-          {byStatus.map((r) => (
-            <tr key={r.status}>
-              <td>{r.status}</td>
-              <td>{r.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Sales by date</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Orders</th>
-            <th>Revenue</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sales.map((r) => (
-            <tr key={r.date}>
-              <td>{r.date}</td>
-              <td>{r.orders}</td>
-              <td>{formatPkr(r.revenue)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1 className="tmh-brand h2 mb-4">Reports</h1>
+      <div className="row g-3">
+        <div className="col-md-4">
+          <div className="tmh-panel">
+            <h2 className="h5">Orders by status</h2>
+            <table className="table tmh-table mb-0">
+              <tbody>
+                {byStatus.map((r) => (
+                  <tr key={r.status}><td>{r.status}</td><td className="text-end fw-semibold">{r.count}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="col-md-8">
+          <div className="tmh-panel">
+            <h2 className="h5">Sales by date</h2>
+            <table className="table tmh-table mb-0">
+              <thead><tr><th>Date</th><th>Orders</th><th className="text-end">Revenue</th></tr></thead>
+              <tbody>
+                {sales.map((r) => (
+                  <tr key={r.date}><td>{r.date}</td><td>{r.orders}</td><td className="text-end">{formatPkr(r.revenue)}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

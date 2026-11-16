@@ -30,23 +30,31 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
-      <form className="form card" onSubmit={onSubmit} style={{ width: 'min(400px, 100%)' }}>
-        <h1 style={{ margin: 0 }}>Admin login</h1>
-        <p className="muted">Default owner: owner@thematernityhome.pk / Admin123!</p>
-        <label>
-          Email
-          <input value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        {error ? <p className="error">{error}</p> : null}
-        <button className="btn" disabled={busy} type="submit">
+    <div className="tmh-login-wrap">
+      <form className="tmh-login-card tmh-form" onSubmit={onSubmit}>
+        <div className="tmh-brand fs-3 mb-1">The Maternity Home</div>
+        <div className="text-secondary mb-4">Admin portal sign-in</div>
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Password</label>
+          <input
+            className="form-control"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        {error ? <div className="alert alert-danger py-2">{error}</div> : null}
+        <button className="btn btn-tmh w-100" disabled={busy} type="submit">
           Sign in
         </button>
+        <p className="small text-secondary mt-3 mb-0">
+          Seed owner: owner@thematernityhome.pk / Admin123!
+        </p>
       </form>
-    </main>
+    </div>
   );
 }

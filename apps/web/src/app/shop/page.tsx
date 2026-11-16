@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { formatPkr } from '../../lib/api';
+import { productImage } from '../../lib/images';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
@@ -20,45 +21,72 @@ export default async function ShopPage({
   ]);
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>Shop</h1>
-      <form style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', margin: '1rem 0' }}>
-        <input name="q" defaultValue={sp.q} placeholder="Search products" />
-        <select name="category" defaultValue={sp.category || ''}>
-          <option value="">All categories</option>
-          {categories.map((c: any) => (
-            <option key={c.id} value={c.slug}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select name="sort" defaultValue={sp.sort || 'newest'}>
-          <option value="newest">Newest</option>
-          <option value="price_asc">Price ↑</option>
-          <option value="price_desc">Price ↓</option>
-        </select>
-        <button className="btn" type="submit">
-          Filter
-        </button>
-      </form>
-
-      {!products.length ? (
-        <p className="muted">No products found. Try another search.</p>
-      ) : (
-        <div className="grid">
-          {products.map((p: any) => (
-            <Link key={p.id} href={`/product/${p.slug}`} className="product-card">
-              {p.images?.[0]?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.images[0].url} alt={p.name} />
-              ) : null}
-              <strong>{p.name}</strong>
-              <span className="muted">{p.brand}</span>
-              <span className="price">{formatPkr(p.displayPrice)}</span>
-            </Link>
-          ))}
+    <main className="tmh-section container">
+      <div className="row g-4">
+        <div className="col-lg-3">
+          <div className="tmh-panel sticky-lg-top" style={{ top: '5.5rem' }}>
+            <h1 className="tmh-display h3">Shop</h1>
+            <p className="text-secondary">Filter by need, then add soft essentials to your cart.</p>
+            <form className="tmh-form d-grid gap-3">
+              <div>
+                <label className="form-label">Search</label>
+                <input className="form-control" name="q" defaultValue={sp.q} placeholder="Pads, onesie…" />
+              </div>
+              <div>
+                <label className="form-label">Category</label>
+                <select className="form-select" name="category" defaultValue={sp.category || ''}>
+                  <option value="">All categories</option>
+                  {categories.map((c: any) => (
+                    <option key={c.id} value={c.slug}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="form-label">Sort</label>
+                <select className="form-select" name="sort" defaultValue={sp.sort || 'newest'}>
+                  <option value="newest">Newest</option>
+                  <option value="price_asc">Price ↑</option>
+                  <option value="price_desc">Price ↓</option>
+                </select>
+              </div>
+              <button className="btn btn-tmh" type="submit">
+                Apply filters
+              </button>
+            </form>
+          </div>
         </div>
-      )}
+        <div className="col-lg-9">
+          {!products.length ? (
+            <div className="tmh-panel">
+              <h2 className="h4">No products found</h2>
+              <p className="text-secondary mb-3">Try another search or browse the full catalogue.</p>
+              <Link href="/shop" className="btn btn-tmh-outline">
+                Reset filters
+              </Link>
+            </div>
+          ) : (
+            <div className="row g-3">
+              {products.map((p: any) => (
+                <div className="col-6 col-md-4" key={p.id}>
+                  <Link href={`/product/${p.slug}`} className="text-decoration-none text-dark">
+                    <article className="tmh-card">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className="tmh-card-img" src={productImage(p)} alt={p.name} />
+                      <div className="tmh-card-body">
+                        <div className="text-secondary small">{p.brand}</div>
+                        <div className="fw-semibold">{p.name}</div>
+                        <div className="tmh-price mt-1">{formatPkr(p.displayPrice)}</div>
+                      </div>
+                    </article>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </main>
   );
 }

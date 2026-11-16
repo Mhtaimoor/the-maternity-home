@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { APP_NAME } from '@tmh/shared';
 import { AdminShell } from '../components/AdminShell';
-import './globals.css';
+import { BootstrapClient } from '../components/BootstrapClient';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../styles/tmh-admin.css';
 
 export const metadata: Metadata = {
   title: `${APP_NAME} Admin`,
@@ -12,7 +15,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="tmh-admin-body">
+        <BootstrapClient />
         <AdminShell>{children}</AdminShell>
       </body>
     </html>

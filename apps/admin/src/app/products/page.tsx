@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPkr, getTokens } from '../../lib/api';
 
+const SKU_THUMBS: Record<string, string> = {
+  'TMH-MP-001': '/images/product-maternity-pads.jpg',
+  'TMH-NO-010': '/images/product-onesie.jpg',
+  'TMH-FB-250': '/images/product-bottle.jpg',
+};
+
 export default function ProductsPage() {
   const router = useRouter();
   const [products, setProducts] = useState<any[]>([]);
@@ -26,11 +32,8 @@ export default function ProductsPage() {
   }
 
   useEffect(() => {
-    if (!getTokens().accessToken) {
-      router.push('/login');
-      return;
-    }
-    void load().catch(() => router.push('/login'));
+    if (!getTokens().accessToken) router.push('/login');
+    else void load().catch(() => router.push('/login'));
   }, [router]);
 
   async function createProduct(e: React.FormEvent) {
@@ -46,13 +49,7 @@ export default function ProductsPage() {
           categoryId: form.categoryId || undefined,
           description: form.description,
           status: 'ACTIVE',
-          variants: [
-            {
-              name: 'Default',
-              sku: `${form.sku}-DEF`,
-              stock: Number(form.stock),
-            },
-          ],
+          variants: [{ name: 'Default', sku: `${form.sku}-DEF`, stock: Number(form.stock) }],
         }),
       });
       setMsg('Product created');
@@ -73,77 +70,72 @@ export default function ProductsPage() {
 
   return (
     <div>
-      <h1>Products</h1>
-      <form className="form card" onSubmit={createProduct} style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ margin: 0 }}>Add product</h2>
-        <input required placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        <input required placeholder="SKU" value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
-        <input
-          type="number"
-          required
-          placeholder="Selling price"
-          value={form.sellingPrice}
-          onChange={(e) => setForm({ ...form, sellingPrice: Number(e.target.value) })}
-        />
-        <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        <input
-          type="number"
-          placeholder="Initial stock"
-          value={form.stock}
-          onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-        />
-        <button className="btn" type="submit">
-          Create
-        </button>
-        {msg ? <p className="muted">{msg}</p> : null}
-      </form>
-
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Status</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((p) => {
-            const v = p.variants?.[0];
-            return (
-              <tr key={p.id}>
-                <td>
-                  <strong>{p.name}</strong>
-                  <div className="muted">{p.sku}</div>
-                </td>
-                <td>{formatPkr(p.displayPrice)}</td>
-                <td>{v ? `${v.available} avail / ${v.stock} on hand` : '—'}</td>
-                <td>{p.status}</td>
-                <td>
-                  {v ? (
-                    <>
-                      <button className="btn secondary" onClick={() => adjust(p.id, v.id, 5)}>
-                        +5
-                      </button>{' '}
-                      <button className="btn secondary" onClick={() => adjust(p.id, v.id, -1)}>
-                        -1
-                      </button>
-                    </>
-                  ) : null}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <h1 className="tmh-brand h2 mb-4">Products</h1>
+      <div className="row g-3">
+        <div className="col-lg-4">
+          <form className="tmh-panel tmh-form" onSubmit={createProduct}>
+            <h2 className="h5">Add product</h2>
+            <input className="form-control mb-2" required placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input className="form-control mb-2" required placeholder="SKU" value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+            <input className="form-control mb-2" type="number" required value={form.sellingPrice} onChange={(e) => setForm({ ...form, sellingPrice: Number(e.target.value) })} />
+            <select className="form-select mb-2" value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+            <textarea className="form-control mb-2" placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            <input className="form-control mb-3" type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })} />
+            <button className="btn btn-tmh w-100" type="submit">Create</button>
+            {msg ? <div className="small mt-2 text-secondary">{msg}</div> : null}
+          </form>
+        </div>
+        <div className="col-lg-8">
+          <div className="tmh-panel">
+            <div className="table-responsive">
+              <table className="table tmh-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((p) => {
+                    const v = p.variants?.[0];
+                    const thumb = SKU_THUMBS[p.sku] || '/images/product-onesie.jpg';
+                    return (
+                      <tr key={p.id}>
+                        <td>
+                          <div className="d-flex gap-2 align-items-center">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={thumb} alt="" className="tmh-thumb" />
+                            <div>
+                              <div className="fw-semibold">{p.name}</div>
+                              <div className="text-secondary small">{p.sku}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{formatPkr(p.displayPrice)}</td>
+                        <td>{v ? `${v.available} avail` : '—'}</td>
+                        <td><span className="badge rounded-pill text-bg-success">{p.status}</span></td>
+                        <td className="text-end">
+                          {v ? (
+                            <div className="btn-group">
+                              <button className="btn btn-tmh-outline btn-sm" onClick={() => adjust(p.id, v.id, 5)}>+5</button>
+                              <button className="btn btn-tmh-outline btn-sm" onClick={() => adjust(p.id, v.id, -1)}>-1</button>
+                            </div>
+                          ) : null}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -32,31 +32,45 @@ export function AddToCart({
   }
 
   return (
-    <div style={{ display: 'grid', gap: '0.75rem', maxWidth: 360 }}>
-      <label>
-        Variant
-        <select value={variantId} onChange={(e) => setVariantId(e.target.value)}>
+    <div className="tmh-form d-grid gap-3 mt-3">
+      <div>
+        <label className="form-label">Variant</label>
+        <select className="form-select" value={variantId} onChange={(e) => setVariantId(e.target.value)}>
           {variants.map((v) => (
             <option key={v.id} value={v.id}>
               {v.name} ({v.available} left)
             </option>
           ))}
         </select>
-      </label>
-      <label>
-        Quantity
+      </div>
+      <div>
+        <label className="form-label">Quantity</label>
         <input
+          className="form-control"
           type="number"
           min={1}
           max={selected?.available || 1}
           value={qty}
           onChange={(e) => setQty(Number(e.target.value))}
         />
-      </label>
-      <button className="btn" disabled={busy || !selected || selected.available < 1} onClick={add}>
-        {selected?.available ? 'Add to cart' : 'Out of stock'}
+      </div>
+      <button
+        className="btn btn-tmh"
+        disabled={busy || !selected || selected.available < 1}
+        onClick={add}
+      >
+        {selected?.available ? (
+          <>
+            <i className="bi bi-bag-plus me-2" />
+            Add to cart
+          </>
+        ) : (
+          'Out of stock'
+        )}
       </button>
-      {msg ? <p className={msg.includes('Added') ? 'muted' : 'error'}>{msg}</p> : null}
+      {msg ? (
+        <div className={`small ${msg.includes('Added') ? 'text-success' : 'text-danger'}`}>{msg}</div>
+      ) : null}
     </div>
   );
 }

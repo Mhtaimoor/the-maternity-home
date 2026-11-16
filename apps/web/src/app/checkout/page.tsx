@@ -51,60 +51,91 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!cart) return <main className="section container muted">Loading…</main>;
+  if (!cart) {
+    return (
+      <main className="tmh-section container">
+        <div className="text-secondary">Loading checkout…</div>
+      </main>
+    );
+  }
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>Checkout</h1>
-      <p className="muted">Guest checkout · Cart subtotal {formatPkr(cart.subtotal || 0)}</p>
-      <form className="form" onSubmit={placeOrder}>
-        <label>
-          Full name
-          <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        </label>
-        <label>
-          Phone
-          <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-        </label>
-        <label>
-          Email (optional)
-          <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        </label>
-        <label>
-          City
-          <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}>
-            {zones.map((z) => (
-              <option key={z.city} value={z.city}>
-                {z.city} — delivery Rs {z.rate}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Address
-          <textarea required value={form.addressLine1} onChange={(e) => setForm({ ...form, addressLine1: e.target.value })} />
-        </label>
-        <label>
-          Delivery notes
-          <input value={form.deliveryNotes} onChange={(e) => setForm({ ...form, deliveryNotes: e.target.value })} />
-        </label>
-        <label>
-          Payment
-          <select value={form.paymentMethod} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}>
-            <option value="COD">Cash on delivery</option>
-            <option value="BANK_TRANSFER">Bank / wallet transfer</option>
-            <option value="GATEWAY">Digital gateway (mock)</option>
-          </select>
-        </label>
-        <label>
-          Coupon
-          <input value={form.couponCode} onChange={(e) => setForm({ ...form, couponCode: e.target.value })} placeholder="WELCOME10" />
-        </label>
-        {error ? <p className="error">{error}</p> : null}
-        <button className="btn" disabled={busy || !cart.items?.length} type="submit">
-          Place order
-        </button>
-      </form>
+    <main className="tmh-section container">
+      <div className="row g-4">
+        <div className="col-lg-7">
+          <div className="tmh-panel">
+            <h1 className="tmh-display h2 mb-1">Checkout</h1>
+            <p className="text-secondary mb-4">Guest checkout · secure order confirmation</p>
+            <form className="tmh-form row g-3" onSubmit={placeOrder}>
+              <div className="col-md-6">
+                <label className="form-label">Full name</label>
+                <input className="form-control" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Phone</label>
+                <input className="form-control" required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Email (optional)</label>
+                <input className="form-control" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">City</label>
+                <select className="form-select" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}>
+                  {zones.map((z) => (
+                    <option key={z.city} value={z.city}>
+                      {z.city} — Rs {z.rate}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Payment</label>
+                <select className="form-select" value={form.paymentMethod} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}>
+                  <option value="COD">Cash on delivery</option>
+                  <option value="BANK_TRANSFER">Bank / wallet transfer</option>
+                  <option value="GATEWAY">Digital gateway (mock)</option>
+                </select>
+              </div>
+              <div className="col-12">
+                <label className="form-label">Address</label>
+                <textarea className="form-control" required rows={3} value={form.addressLine1} onChange={(e) => setForm({ ...form, addressLine1: e.target.value })} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Delivery notes</label>
+                <input className="form-control" value={form.deliveryNotes} onChange={(e) => setForm({ ...form, deliveryNotes: e.target.value })} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Coupon</label>
+                <input className="form-control" value={form.couponCode} onChange={(e) => setForm({ ...form, couponCode: e.target.value })} placeholder="WELCOME10" />
+              </div>
+              {error ? <div className="col-12"><div className="alert alert-danger mb-0">{error}</div></div> : null}
+              <div className="col-12">
+                <button className="btn btn-tmh" disabled={busy || !cart.items?.length} type="submit">
+                  Place order
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className="col-lg-5">
+          <div className="tmh-panel">
+            <h2 className="h5">Order summary</h2>
+            <div className="text-secondary mb-2">Cart subtotal</div>
+            <div className="tmh-price fs-3">{formatPkr(cart.subtotal || 0)}</div>
+            <ul className="list-unstyled mt-3 mb-0">
+              {(cart.items || []).map((i: any) => (
+                <li key={i.variantId} className="d-flex justify-content-between py-2 border-bottom">
+                  <span>
+                    {i.productName} × {i.quantity}
+                  </span>
+                  <strong>{formatPkr(i.lineTotal)}</strong>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

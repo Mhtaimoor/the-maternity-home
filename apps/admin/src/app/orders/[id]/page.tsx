@@ -21,16 +21,12 @@ export default function OrderDetailPage() {
   const [error, setError] = useState('');
 
   async function load() {
-    const data = await api(`/admin/orders/${id}`);
-    setOrder(data);
+    setOrder(await api(`/admin/orders/${id}`));
   }
 
   useEffect(() => {
-    if (!getTokens().accessToken) {
-      router.push('/login');
-      return;
-    }
-    void load().catch((e) => setError(e.message));
+    if (!getTokens().accessToken) router.push('/login');
+    else void load().catch((e) => setError(e.message));
   }, [id, router]);
 
   async function setStatus(status: string) {
@@ -57,51 +53,52 @@ export default function OrderDetailPage() {
     await load();
   }
 
-  if (!order) return <p className="muted">Loading…</p>;
-
+  if (!order) return <div className="text-secondary">Loading…</div>;
   const next = NEXT[order.status];
 
   return (
-    <div>
-      <h1>{order.orderNumber}</h1>
-      <p className="muted">
-        {order.customerName} · {order.customerPhone} · {order.city}
-      </p>
-      <p>
-        Status <strong>{order.status}</strong> · Payment {order.paymentMethod}/{order.paymentStatus} ·{' '}
-        {formatPkr(order.total)}
-      </p>
-      <ul>
-        {order.items.map((i: any) => (
-          <li key={i.id}>
-            {i.productName} × {i.quantity} — {formatPkr(i.lineTotal)}
-          </li>
-        ))}
-      </ul>
-      {order.status === 'PACKED' || next === 'DISPATCHED' ? (
-        <div className="form" style={{ margin: '1rem 0' }}>
-          <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="Courier" />
-          <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="Tracking #" />
+    <div className="row g-3">
+      <div className="col-lg-8">
+        <div className="tmh-panel">
+          <h1 className="tmh-brand h2">{order.orderNumber}</h1>
+          <p className="text-secondary">
+            {order.customerName} · {order.customerPhone} · {order.city}
+          </p>
+          <p>
+            Status <span className="badge rounded-pill text-bg-success">{order.status}</span> · Payment{' '}
+            {order.paymentMethod}/{order.paymentStatus} · <strong>{formatPkr(order.total)}</strong>
+          </p>
+          <ul className="list-group list-group-flush">
+            {order.items.map((i: any) => (
+              <li className="list-group-item bg-transparent text-white d-flex justify-content-between px-0" key={i.id}>
+                <span>{i.productName} × {i.quantity}</span>
+                <strong>{formatPkr(i.lineTotal)}</strong>
+              </li>
+            ))}
+          </ul>
         </div>
-      ) : null}
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        {next ? (
-          <button className="btn" onClick={() => setStatus(next)}>
-            Mark {next}
-          </button>
-        ) : null}
-        {order.status !== 'CANCELLED' && order.status !== 'DELIVERED' ? (
-          <button className="btn secondary" onClick={() => setStatus('CANCELLED')}>
-            Cancel
-          </button>
-        ) : null}
-        {order.paymentStatus !== 'PAID' ? (
-          <button className="btn secondary" onClick={() => void markPaid()}>
-            Mark paid
-          </button>
-        ) : null}
       </div>
-      {error ? <p className="error">{error}</p> : null}
+      <div className="col-lg-4">
+        <div className="tmh-panel tmh-form">
+          <h2 className="h5">Fulfilment</h2>
+          {(order.status === 'PACKED' || next === 'DISPATCHED') && (
+            <>
+              <input className="form-control mb-2" value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="Courier" />
+              <input className="form-control mb-3" value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="Tracking #" />
+            </>
+          )}
+          <div className="d-grid gap-2">
+            {next ? <button className="btn btn-tmh" onClick={() => setStatus(next)}>Mark {next}</button> : null}
+            {order.status !== 'CANCELLED' && order.status !== 'DELIVERED' ? (
+              <button className="btn btn-tmh-outline" onClick={() => setStatus('CANCELLED')}>Cancel</button>
+            ) : null}
+            {order.paymentStatus !== 'PAID' ? (
+              <button className="btn btn-tmh-outline" onClick={() => void markPaid()}>Mark paid</button>
+            ) : null}
+          </div>
+          {error ? <div className="alert alert-danger mt-3 mb-0 py-2">{error}</div> : null}
+        </div>
+      </div>
     </div>
   );
 }

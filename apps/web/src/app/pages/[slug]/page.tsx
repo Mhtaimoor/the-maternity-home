@@ -10,9 +10,17 @@ export default async function ContentPage({ params }: { params: Promise<{ slug: 
   if (!page) notFound();
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>{page.title}</h1>
-      <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.6 }}>{page.body}</pre>
+    <main className="tmh-section container">
+      <div className="row justify-content-center">
+        <div className="col-lg-8">
+          <div className="tmh-panel">
+            <h1 className="tmh-display h2">{page.title}</h1>
+            <pre className="mb-0 mt-3" style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.7 }}>
+              {page.body}
+            </pre>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { APP_NAME } from '@tmh/shared';
+import { BootstrapClient } from '../components/BootstrapClient';
 import { SiteFooter, SiteHeader } from '../components/SiteChrome';
-import './globals.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../styles/tmh.css';
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -11,7 +14,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="tmh-body">
+        <BootstrapClient />
         <SiteHeader />
         {children}
         <SiteFooter />

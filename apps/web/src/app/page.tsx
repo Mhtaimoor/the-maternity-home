@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { formatPkr } from '../lib/api';
+import { categoryImage, productImage } from '../lib/images';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
@@ -18,55 +19,104 @@ export default async function HomePage() {
 
   return (
     <main>
-      <section className="hero container">
-        <p className="muted" style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12 }}>
-          {banner?.subtitle || 'Pakistan · PKR'}
-        </p>
-        <h1>{banner?.title || 'Care for every stage'}</h1>
-        <p className="muted">
-          Maternity, postpartum, newborn and baby essentials — shop with COD and tracked delivery.
-        </p>
-        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
-          <Link className="btn" href="/shop">
-            Shop now
-          </Link>
-          <a
-            className="btn secondary"
-            href="https://wa.me/923000000000"
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp
-          </a>
+      <section className="tmh-hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="tmh-hero-media" src="/images/hero-maternity.jpg" alt="Mother and newborn" />
+        <div className="tmh-hero-overlay" />
+        <div className="container">
+          <div className="tmh-hero-content">
+            <div className="tmh-hero-kicker">
+              {banner?.subtitle || 'Pakistan · Care-focused essentials'}
+            </div>
+            <h1 className="tmh-display display-3 text-white mb-3">
+              {banner?.title || 'Care for every stage'}
+            </h1>
+            <p className="lead text-white-50 mb-4">
+              Soft essentials for maternity, postpartum and newborn days — shop with COD and tracked
+              delivery across Pakistan.
+            </p>
+            <div className="d-flex flex-wrap gap-2">
+              <Link className="btn btn-tmh" href="/shop">
+                Shop the collection
+              </Link>
+              <Link className="btn btn-light rounded-pill px-4 fw-semibold" href="/pages/about">
+                Our story
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="section container">
-        <h2>Shop by category</h2>
-        <div className="grid">
+      <section className="tmh-section container">
+        <div className="tmh-trust">
+          <div className="tmh-trust-item">
+            <i className="bi bi-truck fs-4 text-success" />
+            <div className="fw-semibold mt-2">COD in major cities</div>
+            <div className="text-secondary small">Lahore, Islamabad, Karachi and more</div>
+          </div>
+          <div className="tmh-trust-item">
+            <i className="bi bi-shield-check fs-4 text-success" />
+            <div className="fw-semibold mt-2">Thoughtful catalogue</div>
+            <div className="text-secondary small">Clear sizes, packs and stock status</div>
+          </div>
+          <div className="tmh-trust-item">
+            <i className="bi bi-chat-heart fs-4 text-success" />
+            <div className="fw-semibold mt-2">WhatsApp support</div>
+            <div className="text-secondary small">Human help when you need it</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="tmh-section container pt-0">
+        <div className="d-flex justify-content-between align-items-end mb-4">
+          <div>
+            <div className="tmh-chip mb-2">Browse</div>
+            <h2 className="tmh-section-title h1 mb-0">Shop by category</h2>
+          </div>
+          <Link href="/shop" className="btn btn-tmh-outline btn-sm d-none d-md-inline-flex">
+            View all
+          </Link>
+        </div>
+        <div className="row g-3">
           {categories.map((c: any) => (
-            <Link key={c.id} href={`/shop?category=${c.slug}`} className="product-card">
-              <strong>{c.name}</strong>
-              <span className="muted">{c.description}</span>
-            </Link>
+            <div className="col-6 col-md-4 col-lg-3" key={c.id}>
+              <Link href={`/shop?category=${c.slug}`} className="text-decoration-none text-dark">
+                <article className="tmh-card">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className="tmh-card-img" src={categoryImage(c.slug)} alt={c.name} />
+                  <div className="tmh-card-body">
+                    <div className="fw-semibold">{c.name}</div>
+                    <div className="text-secondary small">{c.description}</div>
+                  </div>
+                </article>
+              </Link>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className="section container">
-        <h2>Featured</h2>
-        <div className="grid">
+      <section className="tmh-section container pt-0">
+        <div className="d-flex justify-content-between align-items-end mb-4">
+          <div>
+            <div className="tmh-chip mb-2">Featured</div>
+            <h2 className="tmh-section-title h1 mb-0">Loved right now</h2>
+          </div>
+        </div>
+        <div className="row g-3">
           {products.map((p: any) => (
-            <Link key={p.id} href={`/product/${p.slug}`} className="product-card">
-              {p.images?.[0]?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.images[0].url} alt={p.name} />
-              ) : (
-                <div style={{ aspectRatio: 1, background: '#dde8e4' }} />
-              )}
-              <strong>{p.name}</strong>
-              <span className="price">{formatPkr(p.displayPrice)}</span>
-            </Link>
+            <div className="col-6 col-lg-4" key={p.id}>
+              <Link href={`/product/${p.slug}`} className="text-decoration-none text-dark">
+                <article className="tmh-card">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className="tmh-card-img" src={productImage(p)} alt={p.name} />
+                  <div className="tmh-card-body">
+                    <div className="text-secondary small">{p.brand}</div>
+                    <div className="fw-semibold">{p.name}</div>
+                    <div className="tmh-price mt-1">{formatPkr(p.displayPrice)}</div>
+                  </div>
+                </article>
+              </Link>
+            </div>
           ))}
         </div>
       </section>

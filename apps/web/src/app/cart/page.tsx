@@ -31,54 +31,98 @@ export default function CartPage() {
     await load();
   }
 
-  if (error) return <main className="section container error">{error}</main>;
-  if (!cart) return <main className="section container muted">Loading cart…</main>;
+  if (error) {
+    return (
+      <main className="tmh-section container">
+        <div className="alert alert-danger">{error}</div>
+      </main>
+    );
+  }
+  if (!cart) {
+    return (
+      <main className="tmh-section container">
+        <div className="text-secondary">Loading cart…</div>
+      </main>
+    );
+  }
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>Cart</h1>
-      {!cart.items?.length ? (
-        <p className="muted">
-          Cart is empty. <Link href="/shop">Continue shopping</Link>
-        </p>
-      ) : (
-        <>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.items.map((item: any) => (
-                <tr key={item.variantId}>
-                  <td>
-                    <strong>{item.productName}</strong>
-                    <div className="muted">{item.variantName}</div>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min={0}
-                      max={item.available}
-                      defaultValue={item.quantity}
-                      style={{ width: 70 }}
-                      onBlur={(e) => updateQty(item.variantId, Number(e.target.value))}
-                    />
-                  </td>
-                  <td>{formatPkr(item.lineTotal)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="price">Subtotal: {formatPkr(cart.subtotal)}</p>
-          <Link className="btn" href="/checkout">
-            Checkout
-          </Link>
-        </>
-      )}
+    <main className="tmh-section container">
+      <div className="row g-4">
+        <div className="col-lg-8">
+          <div className="tmh-panel">
+            <h1 className="tmh-display h2 mb-4">Your cart</h1>
+            {!cart.items?.length ? (
+              <div>
+                <p className="text-secondary">Your cart is empty.</p>
+                <Link href="/shop" className="btn btn-tmh">
+                  Continue shopping
+                </Link>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cart.items.map((item: any) => (
+                      <tr key={item.variantId}>
+                        <td>
+                          <div className="d-flex gap-3 align-items-center">
+                            {item.imageUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={item.imageUrl.includes('placehold') ? '/images/product-onesie.jpg' : item.imageUrl}
+                                alt=""
+                                width={64}
+                                height={64}
+                                className="rounded-3 object-fit-cover"
+                              />
+                            ) : null}
+                            <div>
+                              <div className="fw-semibold">{item.productName}</div>
+                              <div className="text-secondary small">{item.variantName}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ width: 110 }}>
+                          <input
+                            className="form-control"
+                            type="number"
+                            min={0}
+                            max={item.available}
+                            defaultValue={item.quantity}
+                            onBlur={(e) => updateQty(item.variantId, Number(e.target.value))}
+                          />
+                        </td>
+                        <td className="fw-semibold">{formatPkr(item.lineTotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="col-lg-4">
+          <div className="tmh-panel">
+            <div className="text-secondary">Subtotal</div>
+            <div className="tmh-price display-6">{formatPkr(cart.subtotal || 0)}</div>
+            <p className="text-secondary small mt-2">Delivery is calculated at checkout.</p>
+            <Link
+              className={`btn btn-tmh w-100 ${!cart.items?.length ? 'disabled' : ''}`}
+              href="/checkout"
+            >
+              Checkout
+            </Link>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

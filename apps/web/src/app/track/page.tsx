@@ -25,35 +25,41 @@ export default function TrackPage() {
   }
 
   return (
-    <main className="section container">
-      <h1 style={{ fontFamily: 'Georgia, serif' }}>Track order</h1>
-      <form className="form" onSubmit={track}>
-        <label>
-          Order number
-          <input required value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />
-        </label>
-        <label>
-          Phone used at checkout
-          <input required value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </label>
-        <button className="btn" type="submit">
-          Look up
-        </button>
-      </form>
-      {error ? <p className="error">{error}</p> : null}
-      {order ? (
-        <div style={{ marginTop: '1.5rem' }}>
-          <p>
-            <strong>{order.orderNumber}</strong> — {order.status}
-          </p>
-          <p className="muted">
-            Total {formatPkr(order.total)}
-            {order.trackingNumber
-              ? ` · ${order.courierName} ${order.trackingNumber}`
-              : ''}
-          </p>
+    <main className="tmh-section container">
+      <div className="row justify-content-center">
+        <div className="col-lg-7">
+          <div className="tmh-panel">
+            <div className="tmh-chip mb-3">Order lookup</div>
+            <h1 className="tmh-display h2">Track your order</h1>
+            <p className="text-secondary">Use the order number and the phone you used at checkout.</p>
+            <form className="tmh-form row g-3" onSubmit={track}>
+              <div className="col-md-6">
+                <label className="form-label">Order number</label>
+                <input className="form-control" required value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Phone</label>
+                <input className="form-control" required value={phone} onChange={(e) => setPhone(e.target.value)} />
+              </div>
+              <div className="col-12">
+                <button className="btn btn-tmh" type="submit">
+                  Look up
+                </button>
+              </div>
+            </form>
+            {error ? <div className="alert alert-danger mt-3 mb-0">{error}</div> : null}
+            {order ? (
+              <div className="mt-4 p-3 rounded-4" style={{ background: 'rgba(47,111,94,0.08)' }}>
+                <div className="fw-semibold fs-5">{order.orderNumber}</div>
+                <div className="text-secondary">
+                  Status {order.status} · Total {formatPkr(order.total)}
+                  {order.trackingNumber ? ` · ${order.courierName} ${order.trackingNumber}` : ''}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
-      ) : null}
+      </div>
     </main>
   );
 }
