@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         String   @default("ORDER_STAFF")
+  active       Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  inventoryMoves InventoryMovement[]
+  auditLogs      AuditLog[]
+  refreshTokens  RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  sku               String   @unique
+  description       String?
+  brand             String?
+  categoryId        String?
+  category          Category? @relation(fields: [categoryId], references: [id])
+  costPrice         Float    @default(0)
+  sellingPrice      Float
+  salePrice         Float?
+  lowStockThreshold Int      @default(5)
+  weightGrams       Int?
+  status            String   @default("DRAFT")
+  featured          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  variants          ProductVariant[]
+  images            ProductImage[]
+  movements         InventoryMovement[]
+}
+
+model ProductVariant {
+  id              String  @id @default(cuid())
+  productId       String
+  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name            String
+  sku             String  @unique
+  size            String?
+  color           String?
+  pack            String?
+  priceAdjustment Float   @default(0)
+  stock           Int     @default(0)
+  reserved        Int     @default(0)
+  active          Boolean @default(true)
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+}
+
+model InventoryMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  variantId String?
+  delta     Int
+  reason    String
+  staffId   String?
+  staff     User?    @relation(fields: [staffId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  phone     String    @unique
+  email     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  addresses Address[]
+  orders    Order[]
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  label      String?
+  line1      String
+  line2      String?
+  city       String
+  notes      String?
+  isDefault  Boolean  @default(true)
+}
+
+model DeliveryZone {
+  id           String  @id @default(cuid())
+  city         String  @unique
+  rate         Float
+  etaDaysMin   Int     @default(2)
+  etaDaysMax   Int     @default(5)
+  freeAbove    Float?
+  active       Boolean @default(true)
+  codAvailable Boolean @default(true)
+}
+
+model Coupon {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  type       String
+  value      Float
+  minOrder   Float     @default(0)
+  usageLimit Int?
+  usedCount  Int       @default(0)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  active     Boolean   @default(true)
+  categoryId String?
+  createdAt  DateTime  @default(now())
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  orderNumber    String   @unique
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  customerName   String
+  customerPhone  String
+  customerEmail  String?
+  addressLine1   String
+  addressLine2   String?
+  city           String
+  deliveryNotes  String?
+  status         String   @default("NEW")
+  paymentMethod  String   @default("COD")
+  paymentStatus  String   @default("UNPAID")
+  subtotal       Float
+  deliveryFee    Float    @default(0)
+  discount       Float    @default(0)
+  total          Float
+  couponCode     String?
+  courierName    String?
+  trackingNumber String?
+  dispatchedAt   DateTime?
+  deliveredAt    DateTime?
+  cancelledAt    DateTime?
+  cancelReason   String?
+  internalNotes  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  items          OrderItem[]
+  payments       Payment[]
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderId     String
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  variantId   String?
+  productName String
+  sku         String
+  quantity    Int
+  unitPrice   Float
+  lineTotal   Float
+}
+
+model Payment {
+  id         String    @id @default(cuid())
+  orderId    String
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider   String
+  method     String
+  amount     Float
+  status     String    @default("PENDING")
+  reference  String?
+  rawPayload String?
+  paidAt     DateTime?
+  refundedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model ContentPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  body      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Banner {
+  id        String  @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String?
+  linkUrl   String?
+  active    Boolean @default(true)
+  sortOrder Int     @default(0)
+}
+
+model StoreSetting {
+  id   String @id @default("default")
+  json String
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  summary   String
+  createdAt DateTime @default(now())
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  channel   String
+  to        String
+  subject   String?
+  body      String
+  meta      String?
+  createdAt DateTime @default(now())
+}

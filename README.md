@@ -42,42 +42,28 @@ the-maternity-home/
 └── docker-compose.yml
 ```
 
-## Local setup (Phase 0)
+## Local setup
 
-Prerequisites: **Node 20+**, **pnpm 9+** (`npm i -g pnpm@9`), **Docker Desktop** (for Postgres/Redis).
+Prerequisites: **Node 20+**, **pnpm 9+** (`npm i -g pnpm@9`). Docker is optional (Postgres/Redis); local default is **SQLite**.
 
 ```bash
-# 1. Install dependencies (also builds @tmh/shared)
 pnpm install
-
-# 2. Env file
 cp .env.example .env
-
-# 3. Infrastructure (Postgres + Redis)
-pnpm docker:up
-
-# 4. Run all apps
-pnpm dev
-```
-
-Or run individually:
-
-```bash
-pnpm dev:api    # http://localhost:4000/health
+cp .env apps/api/.env
+pnpm --filter @tmh/api prisma:generate
+pnpm --filter @tmh/api exec prisma migrate deploy
+pnpm --filter @tmh/api db:seed
+pnpm dev:api    # http://localhost:4000  (docs: /docs)
 pnpm dev:web    # http://localhost:3000
 pnpm dev:admin  # http://localhost:3001
 ```
 
-Useful checks:
-
-```bash
-pnpm typecheck
-pnpm format:check
-```
+Seeded admin: `owner@thematernityhome.pk` / `Admin123!`  
+See [docs/DEFAULTS.md](docs/DEFAULTS.md) and [docs/WORK_PHASES.md](docs/WORK_PHASES.md).
 
 ## Status
 
-Phase 0 — apps scaffolded (web / admin / api + shared + CI). Confirm Docker locally, then start Phase 1. See [docs/WORK_PHASES.md](docs/WORK_PHASES.md).
+Phases 0–8 MVP implemented in-repo (storefront, admin, API, COD checkout, order desk, content, coupons, mock payments). Production domain/SSL/merchant gateway credentials remain owner-side.
 
 ## License
 

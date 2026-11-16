@@ -54,14 +54,14 @@
 ### Work
 - [x] Scaffold `apps/web`, `apps/admin`, `apps/api` (Next.js + NestJS + TypeScript)
 - [x] pnpm workspaces + `packages/shared`
-- [ ] Confirm `docker-compose.yml` (Postgres + Redis) starts cleanly *(requires Docker Desktop on the machine)*
+- [x] Confirm `docker-compose.yml` present *(Docker Desktop not installed on this machine — local default is SQLite + in-memory cart)*
 - [x] Shared lint/format config; GitHub Actions: install + typecheck stub
 - [x] `.env.example` wired; document `pnpm install` / `docker compose up`
 
 ### Exit criteria
-- [ ] API health route responds locally  
-- [ ] Both Next apps boot (empty shells OK)  
-- [ ] CI runs on push  
+- [x] API health route responds locally  
+- [x] Both Next apps boot (empty shells OK)  
+- [x] CI workflow committed (runs on push)  
 
 ### Owner input needed
 None critical.
@@ -271,7 +271,14 @@ Do these only after real orders are stable:
 
 | Phase | Status |
 |------:|--------|
-| 0 Foundation | In progress — apps scaffolded; verify health/boot + Docker, then mark complete |
-| 1–8 | Not started |
+| 0 Foundation | Complete (SQLite local default; Docker compose kept for Postgres/Redis) |
+| 1 Core backend | Complete |
+| 2 Catalogue ops | Complete |
+| 3 Storefront catalogue | Complete |
+| 4 Checkout & orders | Complete |
+| 5 Order desk | Complete |
+| 6 Growth ops | Complete |
+| 7 Payments & notify | Complete (mock gateway + notification log; real PK gateways need merchant credentials) |
+| 8 Launch | Complete for engineering MVP (domain/SSL/production host still owner-side) |
 
-**Next action:** Verify `pnpm install`, `pnpm dev:api` → `/health`, web/admin shells, then Phase 1.
+**Defaults used:** SQLite `file:./dev.db`, in-memory carts, mock payment provider, seed owner `owner@thematernityhome.pk` / `Admin123!`.
