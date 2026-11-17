@@ -86,8 +86,8 @@ export default function OrderDetailPage() {
       />
 
       {/* Visual Status Stepper */}
-      <div className="tmh-panel mb-3 p-3">
-        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div className="tmh-panel mb-3 p-3 overflow-auto">
+        <div className="d-flex justify-content-between align-items-center gap-2" style={{ minWidth: 520 }}>
           {ORDER_FLOW.map((st, i) => {
             const isCompleted = currentStepIdx >= i;
             const isCurrent = order.status === st;

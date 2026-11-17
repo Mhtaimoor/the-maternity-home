@@ -26,7 +26,7 @@ export default function DashboardPage() {
   }, [router]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!data) return <div className="tmh-meta">Loading dashboard…</div>;
+  if (!data) return <div className="tmh-meta p-4 text-center">Loading dashboard…</div>;
 
   return (
     <div className="tmh-animate-page">
@@ -36,25 +36,25 @@ export default function DashboardPage() {
         actions={
           <>
             <Link href="/orders" className="btn btn-tmh-outline btn-sm">
-              Open orders
+              <i className="bi bi-bag-check me-1" /> Open Orders
             </Link>
             <Link href="/products" className="btn btn-tmh btn-sm">
-              Manage products
+              <i className="bi bi-box-seam me-1" /> Manage Products
             </Link>
           </>
         }
       />
 
-      <div className="row g-3 mb-3">
+      <div className="row g-3 mb-4">
         {[
-          { label: 'Today’s orders', value: data.todayOrders, icon: 'bi-bag' },
-          { label: 'Pending queue', value: data.pendingOrders, icon: 'bi-hourglass-split' },
-          { label: 'Paid sales today', value: formatPkr(data.todaySales), icon: 'bi-cash-coin' },
+          { label: 'Today’s orders', value: data.todayOrders, icon: 'bi-bag', color: 'text-success' },
+          { label: 'Pending queue', value: data.pendingOrders, icon: 'bi-hourglass-split', color: 'text-warning' },
+          { label: 'Paid sales today', value: formatPkr(data.todaySales), icon: 'bi-cash-coin', color: 'text-info' },
         ].map((s) => (
-          <div className="col-md-4" key={s.label}>
+          <div className="col-12 col-sm-6 col-md-4" key={s.label}>
             <div className="tmh-stat">
               <div className="tmh-stat-label">
-                <i className={`bi ${s.icon}`} /> {s.label}
+                <i className={`bi ${s.icon} ${s.color}`} /> {s.label}
               </div>
               <div className="tmh-stat-value">{s.value}</div>
             </div>
@@ -63,10 +63,18 @@ export default function DashboardPage() {
       </div>
 
       <div className="row g-3">
-        <div className="col-xl-5">
-          <DataPanel title="Low stock alerts" footer={`${data.lowStock?.length || 0} items need attention`}>
+        <div className="col-12 col-xl-5">
+          <DataPanel
+            title="Low stock alerts"
+            footer={`${data.lowStock?.length || 0} items need attention`}
+            actions={
+              <Link href="/products" className="btn btn-tmh-ghost btn-sm">
+                Restock
+              </Link>
+            }
+          >
             <DataTable
-              minWidth={480}
+              minWidth={360}
               headers={[
                 { label: 'Product' },
                 { label: 'Available', className: 'text-end' },
@@ -80,31 +88,32 @@ export default function DashboardPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={productImageBySku(r.sku)} alt="" className="tmh-thumb" />
                       <div>
-                        <div className="fw-semibold">{r.productName}</div>
+                        <div className="fw-semibold text-white">{r.productName}</div>
                         <div className="tmh-meta">{r.variantName} · {r.sku}</div>
                       </div>
                     </div>
                   </td>
                   <td className="text-end">
                     <StatusBadge value={r.available <= 2 ? 'PENDING' : 'ACTIVE'} />
-                    <div className="fw-semibold mt-1">{r.available}</div>
+                    <div className="fw-semibold text-white mt-1">{r.available} units</div>
                   </td>
                 </tr>
               ))}
             </DataTable>
           </DataPanel>
         </div>
-        <div className="col-xl-7">
+
+        <div className="col-12 col-xl-7">
           <DataPanel
             title="Recent orders"
             actions={
               <Link href="/orders" className="btn btn-tmh-ghost btn-sm">
-                View all
+                View all orders
               </Link>
             }
           >
             <DataTable
-              minWidth={420}
+              minWidth={380}
               headers={[
                 { label: 'Order' },
                 { label: 'Status' },
@@ -121,7 +130,7 @@ export default function DashboardPage() {
                   <td>
                     <StatusBadge value={o.status} />
                   </td>
-                  <td className="text-end fw-semibold">{formatPkr(o.total)}</td>
+                  <td className="text-end fw-semibold text-white">{formatPkr(o.total)}</td>
                 </tr>
               ))}
             </DataTable>
