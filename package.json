@@ -4,9 +4,28 @@
   "version": "0.1.0",
   "description": "The Maternity Home — custom storefront, admin portal, and API",
   "scripts": {
-    "generate:plan-docx": "node scripts/generate-plan-docx.js"
+    "dev": "pnpm --filter @tmh/shared build && pnpm -r --parallel --filter @tmh/web --filter @tmh/admin --filter @tmh/api run dev",
+    "dev:web": "pnpm --filter @tmh/web dev",
+    "dev:admin": "pnpm --filter @tmh/admin dev",
+    "dev:api": "pnpm --filter @tmh/shared build && pnpm --filter @tmh/api dev",
+    "build": "pnpm --filter @tmh/shared build && pnpm -r --filter '!@tmh/shared' run build",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm --filter @tmh/shared build && pnpm -r run typecheck",
+    "postinstall": "pnpm --filter @tmh/shared build",
+
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "generate:plan-docx": "node scripts/generate-plan-docx.js",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
   },
   "engines": {
-    "node": ">=20"
-  }
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
 }

@@ -240,6 +240,8 @@ Channels: email first; SMS/WhatsApp Business API later (click-to-chat ≠ automa
 
 ## 14. Build phases (revised estimates)
 
+**Full working breakdown (tasks, exit criteria, owner inputs):** [WORK_PHASES.md](./WORK_PHASES.md)
+
 | Phase | Work | Estimate |
 |---|---|---|
 | 0 | Repo, monorepo scaffold, Docker Postgres/Redis, CI skeleton | 1 day |
@@ -251,6 +253,8 @@ Channels: email first; SMS/WhatsApp Business API later (click-to-chat ≠ automa
 | 6 | Content pages, discounts, dashboard/reports | 2–3 days |
 | 7 | Payment Phase 2 (gateway) + notifications | 3–5 days (provider-dependent) |
 | 8 | Hardening, mobile QA, backups, launch | 2–3 days |
+
+**MVP path:** complete Phases 0–5 (+ basic policies), then 6–8. Phase 7 can overlap Phase 6; COD-only launch is allowed if gateway approval is pending.
 
 Domain, merchant approval, and courier onboarding can add calendar time outside engineering.
 
